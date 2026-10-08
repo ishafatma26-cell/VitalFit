@@ -1,5 +1,5 @@
-/* VitalFit Modern Light SaaS Design System */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* VitalFit Clean Light SaaS & Serif Typography Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap');
 
 :root {
     --bg-main: #f8fafc;
@@ -7,27 +7,35 @@
     --border-color: #e2e8f0;
     --border-hover: #cbd5e1;
 
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-light: #eff6ff;
+    --primary-emerald: #10b981;
+    --primary-emerald-hover: #059669;
+    --primary-emerald-light: #ecfdf5;
+
+    --badge-blue: #2563eb;
+    --badge-blue-light: #eff6ff;
+
+    --badge-cyan: #0891b2;
+    --badge-cyan-light: #ecfeff;
+
+    --badge-fire: #f59e0b;
+    --badge-fire-light: #fffbeb;
 
     --text-main: #0f172a;
     --text-muted: #64748b;
     --text-dim: #94a3b8;
 
     --success: #10b981;
-    --success-light: #ecfdf5;
     --warning: #f59e0b;
-    --warning-light: #fffbeb;
     --danger: #ef4444;
     --danger-light: #fef2f2;
 
-    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+    --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.08);
 
     --radius-lg: 16px;
-    --radius-md: 12px;
-    --radius-sm: 8px;
+    --radius-card: 14px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
 }
 
 * {
@@ -45,11 +53,16 @@ body {
     flex-direction: column;
 }
 
+/* Serif Header Typography */
+h1, h2, .serif-header, .page-title, .challenge-card-title {
+    font-family: 'Playfair Display', Georgia, serif;
+}
+
 /* Card Surface */
 .card-panel {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
     transition: all 0.2s ease;
 }
@@ -58,7 +71,7 @@ body {
     border-color: var(--border-hover);
 }
 
-/* Light Frosted Header Navbar */
+/* Header Navbar */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -82,19 +95,20 @@ body {
     color: var(--text-main);
     text-decoration: none;
     letter-spacing: -0.5px;
+    font-family: 'Inter', sans-serif;
 }
 
 .brand-icon {
     width: 38px;
     height: 38px;
-    background: var(--primary);
+    background: var(--primary-emerald);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 900;
     color: #fff;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
 }
 
 .nav-links {
@@ -115,8 +129,8 @@ body {
 }
 
 .nav-link:hover, .nav-link.active {
-    color: var(--primary);
-    background: var(--primary-light);
+    color: var(--primary-emerald-hover);
+    background: var(--primary-emerald-light);
 }
 
 .user-badge {
@@ -135,7 +149,7 @@ body {
     border-radius: 12px;
     font-weight: 800;
     text-transform: uppercase;
-    background: var(--primary);
+    background: var(--primary-emerald);
     color: #fff;
 }
 
@@ -149,7 +163,7 @@ body {
     color: var(--text-main);
 }
 
-/* Main Container Layout */
+/* Main Container */
 .main-container {
     max-width: 1280px;
     margin: 2rem auto;
@@ -158,7 +172,7 @@ body {
     flex: 1;
 }
 
-/* Page Header & Welcome Hero */
+/* Page Header & Hero */
 .page-header {
     margin-bottom: 2rem;
     display: flex;
@@ -167,8 +181,8 @@ body {
 }
 
 .page-title {
-    font-size: 1.85rem;
-    font-weight: 800;
+    font-size: 2.1rem;
+    font-weight: 700;
     letter-spacing: -0.5px;
     color: var(--text-main);
 }
@@ -185,11 +199,51 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     border: 1px solid var(--border-color);
 }
 
-/* Responsive Stat Cards Grid */
+/* Custom Badges */
+.badge-blue-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--badge-blue);
+    background: var(--badge-blue-light);
+    border: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+.badge-streak {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #d97706;
+    background: var(--badge-fire-light);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--badge-cyan);
+    background: var(--badge-cyan-light);
+    border: 1px solid rgba(8, 145, 178, 0.25);
+}
+
+/* Metric Cards */
 .grid-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -213,7 +267,7 @@ body {
     left: 0;
     width: 100%;
     height: 3px;
-    background: var(--primary);
+    background: var(--primary-emerald);
 }
 
 .stat-label {
@@ -233,7 +287,7 @@ body {
 
 .stat-unit {
     font-size: 0.95rem;
-    color: var(--primary);
+    color: var(--primary-emerald);
     margin-left: 0.25rem;
     font-weight: 600;
 }
@@ -249,13 +303,13 @@ body {
 }
 
 .badge-intensity.Low {
-    background: var(--success-light);
+    background: var(--primary-emerald-light);
     border: 1px solid rgba(16, 185, 129, 0.3);
     color: var(--success);
 }
 
 .badge-intensity.Medium {
-    background: var(--warning-light);
+    background: var(--badge-fire-light);
     border: 1px solid rgba(245, 158, 11, 0.3);
     color: var(--warning);
 }
@@ -283,14 +337,25 @@ body {
     text-decoration: none;
 }
 
+.btn-emerald {
+    background: var(--primary-emerald);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn-emerald:hover {
+    background: var(--primary-emerald-hover);
+    transform: translateY(-1px);
+}
+
 .btn-primary {
-    background: var(--primary);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    background: var(--primary-emerald);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
 }
 
 .btn-primary:hover {
-    background: var(--primary-hover);
+    background: var(--primary-emerald-hover);
     transform: translateY(-1px);
 }
 
@@ -304,7 +369,7 @@ body {
     background: #fee2e2;
 }
 
-/* Form Styling */
+/* Form Controls */
 .form-group {
     margin-bottom: 1.25rem;
 }
@@ -330,8 +395,8 @@ body {
 }
 
 .form-control:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    border-color: var(--primary-emerald);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 }
 
 /* Table Responsiveness */
@@ -421,21 +486,11 @@ body {
 .rank-2 { background: #9ca3af; }
 .rank-3 { background: #b45309; }
 
-/* Progress Bar */
-.progress-bar-bg {
-    width: 100%;
-    height: 8px;
-    background: #e2e8f0;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 0.5rem;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background: var(--primary);
-    border-radius: 10px;
-    transition: width 0.4s ease;
+/* Divider */
+.card-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 1rem 0;
 }
 
 /* Alerts & Footer */
@@ -447,9 +502,9 @@ body {
 }
 
 .alert-info {
-    background: var(--primary-light);
-    border: 1px solid rgba(37, 99, 235, 0.3);
-    color: var(--primary);
+    background: var(--primary-emerald-light);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--primary-emerald-hover);
 }
 
 .alert-error {
@@ -468,7 +523,7 @@ footer {
     background: #ffffff;
 }
 
-/* Responsive Rules for Tablet & Mobile */
+/* Responsive Breakpoints */
 @media (max-width: 1024px) {
     .grid-stats {
         grid-template-columns: repeat(2, 1fr);

@@ -21,7 +21,7 @@
 </head>
 <body>
 
-    <!-- Light Frosted Navigation Bar -->
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
@@ -47,7 +47,7 @@
     <div class="main-container">
         <div class="page-header">
             <div>
-                <h1 class="page-title">Community Telemetry Leaderboard</h1>
+                <h1 class="page-title">Community Leaderboard</h1>
                 <p class="page-subtitle">Real-time workout volume and calorie aggregation using Java 8+ Stream API (Collectors.groupingBy & summingInt).</p>
             </div>
         </div>
@@ -62,7 +62,7 @@
                     <div class="card-panel podium-card <%= podiumClass %>">
                         <div class="badge-rank <%= rankClass %>">#<%= p.getRank() %></div>
                         <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;"><%= p.getUserName() %></h3>
-                        <div style="font-size: 2.1rem; font-weight: 800; color: var(--primary); margin: 0.5rem 0; line-height: 1;">
+                        <div style="font-size: 2.1rem; font-weight: 800; color: var(--primary-emerald); margin: 0.5rem 0; line-height: 1;">
                             <%= p.getTotalCalories() %> <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">kcal</span>
                         </div>
                         <div style="display: flex; gap: 0.85rem; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem;">
@@ -96,19 +96,19 @@
                             for (LeaderboardEntry entry : leaderboard) {
                                 boolean isMe = entry.getUserId() == currentUser.getId();
                         %>
-                                <tr style="<%= isMe ? "background: var(--primary-light);" : "" %>">
+                                <tr style="<%= isMe ? "background: var(--primary-emerald-light);" : "" %>">
                                     <td>
-                                        <strong style="font-size: 1.1rem; color: <%= entry.getRank() <= 3 ? "var(--primary)" : "var(--text-muted)" %>;">
+                                        <strong style="font-size: 1.1rem; color: <%= entry.getRank() <= 3 ? "var(--primary-emerald)" : "var(--text-muted)" %>;">
                                             #<%= entry.getRank() %>
                                         </strong>
                                     </td>
                                     <td>
                                         <strong style="color: var(--text-main);"><%= entry.getUserName() %></strong>
                                         <% if (isMe) { %>
-                                            <span style="font-size: 0.7rem; padding: 0.15rem 0.4rem; background: var(--primary); border-radius: 10px; color: #fff; margin-left: 0.5rem; font-weight: 800;">YOU</span>
+                                            <span style="font-size: 0.7rem; padding: 0.15rem 0.4rem; background: var(--primary-emerald); border-radius: 10px; color: #fff; margin-left: 0.5rem; font-weight: 800;">YOU</span>
                                         <% } %>
                                     </td>
-                                    <td><span style="color: var(--primary); font-weight: 800; font-size: 1.05rem;"><%= entry.getTotalCalories() %> kcal</span></td>
+                                    <td><span style="color: var(--primary-emerald-hover); font-weight: 800; font-size: 1.05rem;"><%= entry.getTotalCalories() %> kcal</span></td>
                                     <td><%= entry.getTotalDistance() %> km</td>
                                     <td><%= entry.getTotalDuration() %> mins</td>
                                     <td><%= entry.getTotalWorkouts() %> sessions</td>
