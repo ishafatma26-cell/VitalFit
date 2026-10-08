@@ -38,28 +38,22 @@
             <% } %>
 
             <div style="display: flex; background: #f1f5f9; border-radius: var(--radius-md); padding: 0.25rem; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
-                <a href="login.jsp" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= !isRegister ? "var(--primary)" : "var(--text-muted)" %>; background: <%= !isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= !isRegister ? "var(--shadow-card)" : "none" %>;">Sign In</a>
-                <a href="login.jsp?tab=register" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= isRegister ? "var(--primary)" : "var(--text-muted)" %>; background: <%= isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= isRegister ? "var(--shadow-card)" : "none" %>;">Register</a>
+                <a href="login.jsp" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= !isRegister ? "var(--primary-emerald-hover)" : "var(--text-muted)" %>; background: <%= !isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= !isRegister ? "var(--shadow-card)" : "none" %>;">Sign In</a>
+                <a href="login.jsp?tab=register" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= isRegister ? "var(--primary-emerald-hover)" : "var(--text-muted)" %>; background: <%= isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= isRegister ? "var(--shadow-card)" : "none" %>;">Register</a>
             </div>
 
             <% if (!isRegister) { %>
                 <form action="login" method="post">
                     <div class="form-group">
                         <label class="form-label">Email Address</label>
-                        <input type="email" name="email" class="form-control" placeholder="user@vitalfit.demo" required value="user@vitalfit.demo">
+                        <input type="email" name="email" class="form-control" placeholder="user@vitalfit.demo" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Password</label>
-                        <input type="password" name="password" class="form-control" placeholder="••••••••" required value="User@123">
+                        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign In</button>
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; margin-top: 1rem;">Sign In</button>
                 </form>
-
-                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-muted);">
-                    <strong>Demo Accounts:</strong><br>
-                    • User: <code>user@vitalfit.demo</code> / <code>User@123</code><br>
-                    • Admin: <code>admin@vitalfit.com</code> / <code>Admin@123</code>
-                </div>
             <% } else { %>
                 <form action="register" method="post">
                     <div class="form-group">
@@ -74,7 +68,7 @@
                         <label class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Create Account</button>
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; margin-top: 1rem;">Create Account</button>
                 </form>
             <% } %>
 
