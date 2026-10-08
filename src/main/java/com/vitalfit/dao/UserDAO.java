@@ -129,4 +129,14 @@ public class UserDAO {
             return stmt.executeUpdate() > 0;
         }
     }
+
+    public boolean updateUserName(int userId, String name) throws SQLException {
+        String sql = "UPDATE users SET name = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setInt(2, userId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
 }
