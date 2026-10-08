@@ -22,7 +22,7 @@
 </head>
 <body>
 
-    <!-- Light Frosted Navigation Bar -->
+    <!-- Header Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
@@ -48,14 +48,14 @@
     <div class="main-container">
         <div class="page-header">
             <div>
-                <h1 class="page-title">Workout History & CRUD Engine</h1>
-                <p class="page-subtitle">Log new workout sessions, set target goals, and manage your activity history.</p>
+                <h1 class="page-title">Workout History & Management</h1>
+                <p class="page-subtitle">Log new sessions, define health goals, and manage your activity history.</p>
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
 
-            <!-- Column 1: Forms -->
+            <!-- Forms Column -->
             <div style="display: flex; flex-direction: column; gap: 1.5rem;">
 
                 <!-- Log Workout Form -->
@@ -110,7 +110,7 @@
                             <label class="form-label">Notes / Telemetry</label>
                             <input type="text" name="notes" class="form-control" placeholder="e.g. Heart rate zone 4 sprint intervals">
                         </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Record Workout Session</button>
+                        <button type="submit" class="btn btn-emerald" style="width: 100%;">Record Workout Session</button>
                     </form>
                 </div>
 
@@ -143,9 +143,9 @@
 
             </div>
 
-            <!-- Column 2: Workout History Table -->
+            <!-- Workout History Table -->
             <div class="card-panel" style="padding: 1.5rem;">
-                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Workout History Table</h3>
+                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Workout History</h3>
 
                 <div class="table-responsive">
                     <table class="custom-table">
@@ -173,7 +173,7 @@
                                         <td><span class="badge-intensity <%= w.getIntensity() %>"><%= w.getIntensity() %></span></td>
                                         <td><%= w.getWorkoutDate() %></td>
                                         <td><%= w.getDurationMinutes() %> mins</td>
-                                        <td><span style="color: var(--primary); font-weight: 800;"><%= w.getCaloriesBurned() %> kcal</span></td>
+                                        <td><span style="color: var(--primary-emerald-hover); font-weight: 800;"><%= w.getCaloriesBurned() %> kcal</span></td>
                                         <td><%= w.getDistanceKm() %> km</td>
                                         <td>
                                             <form action="workouts" method="post" style="display: inline;" onsubmit="return confirm('Delete this workout record?');">

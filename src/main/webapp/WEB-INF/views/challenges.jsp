@@ -30,12 +30,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Challenges & ACID Engine - VitalFit</title>
+    <title>Available Challenges - VitalFit</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- Light Frosted Navigation Bar -->
+    <!-- Header Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
@@ -61,8 +61,8 @@
     <div class="main-container">
         <div class="page-header">
             <div>
-                <h1 class="page-title">Community Endurance Challenges</h1>
-                <p class="page-subtitle">Atomic transaction enrollment engine with autoCommit(false) validation.</p>
+                <h1 class="page-title">Available Challenges</h1>
+                <p class="page-subtitle">Transactional registration engine backed by atomic autoCommit(false) validation.</p>
             </div>
         </div>
 
@@ -105,14 +105,13 @@
                         <input type="text" name="description" class="form-control" placeholder="Short summary of challenge rules">
                     </div>
                     <div style="grid-column: 1 / -1;">
-                        <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem;">Launch Challenge</button>
+                        <button type="submit" class="btn btn-emerald" style="padding: 0.6rem 1.5rem;">Launch Challenge</button>
                     </div>
                 </form>
             </div>
         <% } %>
 
-        <!-- Discovery Grid of Active Community Challenges -->
-        <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem; color: var(--text-main);">Discover Active Challenges</h2>
+        <!-- Discovery Grid of Active Challenges Matching Reference Design -->
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
             <% if (challenges != null && !challenges.isEmpty()) {
                 for (Challenge c : challenges) {
@@ -120,44 +119,44 @@
             %>
                     <div class="card-panel" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
+                            <!-- Top Header: Title Left, Participant Count Right -->
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 0.25rem 0.6rem; border-radius: 20px;">
-                                    <%= c.getTargetType() %>
-                                </span>
-                                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">
-                                    👥 <%= c.getParticipantCount() %> Enrolled
+                                <h3 class="challenge-card-title" style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin: 0;"><%= c.getTitle() %></h3>
+                                <span class="badge-blue-pill">
+                                    👤 <%= c.getParticipantCount() %> Participants
                                 </span>
                             </div>
-                            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;"><%= c.getTitle() %></h3>
-                            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.25rem;">
+                            <!-- Description -->
+                            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
                                 <%= c.getDescription() != null ? c.getDescription() : "No description provided." %>
                             </p>
                         </div>
 
-                        <div style="background: #f8fafc; padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem;">
-                                <span style="color: var(--text-muted);">Goal Requirement:</span>
-                                <strong style="color: var(--text-main);"><%= c.getTargetGoal() %> <%= c.getTargetType() %></strong>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
-                                <span style="color: var(--text-muted);">Duration:</span>
-                                <span style="color: var(--text-dim);"><%= c.getStartDate() %> to <%= c.getEndDate() %></span>
-                            </div>
-                        </div>
+                        <div>
+                            <!-- Divider Line -->
+                            <div class="card-divider"></div>
 
-                        <form action="challenges" method="post">
-                            <input type="hidden" name="action" value="join">
-                            <input type="hidden" name="challengeId" value="<%= c.getId() %>">
-                            <% if (isEnrolled || c.isJoined()) { %>
-                                <button type="button" class="btn" style="width: 100%; background: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--success); cursor: default;" disabled>
-                                    ✓ Joined Challenge
-                                </button>
-                            <% } else { %>
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                                    Join Challenge (ACID Tx)
-                                </button>
-                            <% } %>
-                        </form>
+                            <!-- Bottom Row: Target Score Left, End Date Right -->
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 1.25rem; color: var(--text-muted);">
+                                <div><strong>Target:</strong> <span style="color: var(--text-main); font-weight: 700;"><%= c.getTargetGoal() %> <%= c.getTargetType() %></span></div>
+                                <div><strong>Ends:</strong> <span style="color: var(--text-main); font-weight: 700;"><%= c.getEndDate() %></span></div>
+                            </div>
+
+                            <!-- Full-Width Green Button or Active Joined Badge -->
+                            <form action="challenges" method="post">
+                                <input type="hidden" name="action" value="join">
+                                <input type="hidden" name="challengeId" value="<%= c.getId() %>">
+                                <% if (isEnrolled || c.isJoined()) { %>
+                                    <button type="button" class="btn" style="width: 100%; background: var(--primary-emerald-light); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--primary-emerald); cursor: default;" disabled>
+                                        ✓ Joined
+                                    </button>
+                                <% } else { %>
+                                    <button type="submit" class="btn btn-emerald" style="width: 100%;">
+                                        Join Challenge
+                                    </button>
+                                <% } %>
+                            </form>
+                        </div>
                     </div>
             <%  }
                } else { %>
@@ -187,7 +186,7 @@
                             for (Challenge ec : enrolledChallenges) { %>
                                 <tr>
                                     <td><strong style="color: var(--text-main);"><%= ec.getTitle() %></strong></td>
-                                    <td><span style="color: var(--primary); font-weight: 700;"><%= ec.getTargetType() %></span></td>
+                                    <td><span style="color: var(--badge-blue); font-weight: 700;"><%= ec.getTargetType() %></span></td>
                                     <td><%= ec.getTargetGoal() %> <%= ec.getTargetType() %></td>
                                     <td><%= ec.getStartDate() %></td>
                                     <td><%= ec.getEndDate() %></td>

@@ -13,7 +13,7 @@
     }
     List<Workout> recentWorkouts = (List<Workout>) request.getAttribute("recentWorkouts");
     List<Goal> goals = (List<Goal>) request.getAttribute("goals");
-    String currentDateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"));
+    String currentDateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy"));
     int currentStreak = request.getAttribute("currentStreak") != null ? (Integer) request.getAttribute("currentStreak") : 0;
 %>
 <!DOCTYPE html>
@@ -26,7 +26,7 @@
 </head>
 <body>
 
-    <!-- Light Frosted Navigation Bar -->
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
@@ -51,25 +51,20 @@
 
     <div class="main-container">
 
-        <!-- Welcome Hero Banner -->
+        <!-- Hero Welcome Banner -->
         <div class="card-panel welcome-hero">
             <div>
                 <h1 class="page-title">Welcome back, <%= currentUser.getName() %>!</h1>
-                <p class="page-subtitle">Today is <%= currentDateStr %>. Track live workout telemetry and manage goals.</p>
+                <p class="page-subtitle">Track live workout telemetry, active goals, and streak metrics.</p>
             </div>
-            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                <div style="background: var(--primary-light); border: 1px solid rgba(37, 99, 235, 0.3); padding: 0.5rem 1.25rem; border-radius: 30px; display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 1.2rem;">🔥</span>
-                    <div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Active Streak</div>
-                        <div style="font-size: 1.1rem; font-weight: 800; color: var(--primary);"><%= currentStreak %> Days Streak</div>
-                    </div>
-                </div>
-                <a href="workouts" class="btn btn-primary">+ Log Workout</a>
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <span class="badge-streak">🔥 <%= currentStreak %> Day Streak</span>
+                <span class="badge-date">📅 <%= currentDateStr %></span>
+                <a href="workouts" class="btn btn-emerald">+ Log Workout</a>
             </div>
         </div>
 
-        <!-- 4-Card Responsive Metric Grid -->
+        <!-- 4-Card Metric Grid -->
         <div class="grid-stats">
             <div class="card-panel stat-card">
                 <span class="stat-label">Total Workouts Logged</span>
@@ -79,21 +74,21 @@
                 </div>
             </div>
             <div class="card-panel stat-card">
-                <span class="stat-label">Cumulative Calories Burned</span>
+                <span class="stat-label">Calories Burned</span>
                 <div style="display: flex; align-items: baseline;">
                     <span class="stat-value"><%= request.getAttribute("totalCalories") != null ? request.getAttribute("totalCalories") : 0 %></span>
                     <span class="stat-unit">kcal</span>
                 </div>
             </div>
             <div class="card-panel stat-card">
-                <span class="stat-label">Active Goals & Challenges</span>
+                <span class="stat-label">Active Challenges & Goals</span>
                 <div style="display: flex; align-items: baseline;">
                     <span class="stat-value"><%= request.getAttribute("activeGoalsCount") != null ? request.getAttribute("activeGoalsCount") : 0 %></span>
                     <span class="stat-unit">Active</span>
                 </div>
             </div>
             <div class="card-panel stat-card">
-                <span class="stat-label">Daily Streak Count</span>
+                <span class="stat-label">Current Streak</span>
                 <div style="display: flex; align-items: baseline;">
                     <span class="stat-value"><%= currentStreak %></span>
                     <span class="stat-unit">Days</span>
@@ -101,14 +96,14 @@
             </div>
         </div>
 
-        <!-- Dashboard Main Content Layout -->
+        <!-- Dashboard Content Grid -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
 
-            <!-- Recent Activity Preview Table -->
+            <!-- Recent Activity Table Preview -->
             <div class="card-panel" style="padding: 1.5rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Recent Workout Preview</h3>
-                    <a href="workouts" style="color: var(--primary); font-size: 0.85rem; text-decoration: none; font-weight: 700;">View All Workouts &rarr;</a>
+                    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Recent Workout History</h3>
+                    <a href="workouts" style="color: var(--primary-emerald-hover); font-size: 0.85rem; text-decoration: none; font-weight: 700;">View All &rarr;</a>
                 </div>
 
                 <div class="table-responsive">
@@ -130,7 +125,7 @@
                                         <td><span class="badge-intensity <%= w.getIntensity() %>"><%= w.getIntensity() %></span></td>
                                         <td><%= w.getWorkoutDate() %></td>
                                         <td><%= w.getDurationMinutes() %> mins</td>
-                                        <td><span style="color: var(--primary); font-weight: 800;"><%= w.getCaloriesBurned() %> kcal</span></td>
+                                        <td><span style="color: var(--primary-emerald-hover); font-weight: 800;"><%= w.getCaloriesBurned() %> kcal</span></td>
                                     </tr>
                             <%  }
                                } else { %>
@@ -152,7 +147,7 @@
                         <div style="margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
                                 <strong style="font-size: 0.95rem; color: var(--text-main);"><%= g.getTitle() %></strong>
-                                <span style="font-size: 0.85rem; color: var(--primary); font-weight: 800;"><%= g.getProgressPercentage() %>%</span>
+                                <span style="font-size: 0.85rem; color: var(--primary-emerald-hover); font-weight: 800;"><%= g.getProgressPercentage() %>%</span>
                             </div>
                             <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
                                 <%= g.getCurrentValue() %> / <%= g.getTargetValue() %> <%= g.getUnit() %>
@@ -163,7 +158,7 @@
                         </div>
                 <%  }
                    } else { %>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin-top: 1.5rem;">No goals set yet. Add a target goal under the Workouts tab.</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin-top: 1.5rem;">No active goals set yet. Add a target goal in Workouts.</p>
                 <% } %>
             </div>
 
