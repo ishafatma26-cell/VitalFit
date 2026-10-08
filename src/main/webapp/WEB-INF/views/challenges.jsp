@@ -47,6 +47,7 @@
             <a href="workouts" class="nav-link">Workouts</a>
             <a href="challenges" class="nav-link active">Challenges</a>
             <a href="leaderboard" class="nav-link">Leaderboard</a>
+            <a href="profile" class="nav-link">Profile</a>
             <% if (currentUser.isAdmin()) { %>
                 <a href="admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
             <% } %>
@@ -111,7 +112,7 @@
             </div>
         <% } %>
 
-        <!-- Discovery Grid of Active Challenges Matching Reference Design -->
+        <!-- Active Challenges Grid -->
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
             <% if (challenges != null && !challenges.isEmpty()) {
                 for (Challenge c : challenges) {
@@ -142,7 +143,7 @@
                                 <div><strong>Ends:</strong> <span style="color: var(--text-main); font-weight: 700;"><%= c.getEndDate() %></span></div>
                             </div>
 
-                            <!-- Full-Width Green Button or Active Joined Badge -->
+                            <!-- Full-Width Button or Active Joined Badge -->
                             <form action="challenges" method="post">
                                 <input type="hidden" name="action" value="join">
                                 <input type="hidden" name="challengeId" value="<%= c.getId() %>">

@@ -22,7 +22,7 @@
 </head>
 <body>
 
-    <!-- Header Navigation Bar -->
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
@@ -34,6 +34,7 @@
             <a href="workouts" class="nav-link active">Workouts</a>
             <a href="challenges" class="nav-link">Challenges</a>
             <a href="leaderboard" class="nav-link">Leaderboard</a>
+            <a href="profile" class="nav-link">Profile</a>
             <% if (currentUser.isAdmin()) { %>
                 <a href="admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
             <% } %>

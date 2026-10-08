@@ -15,6 +15,7 @@
     List<Goal> goals = (List<Goal>) request.getAttribute("goals");
     String currentDateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy"));
     int currentStreak = request.getAttribute("currentStreak") != null ? (Integer) request.getAttribute("currentStreak") : 0;
+    int totalCalories = request.getAttribute("totalCalories") != null ? (Integer) request.getAttribute("totalCalories") : 0;
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,6 +39,7 @@
             <a href="workouts" class="nav-link">Workouts</a>
             <a href="challenges" class="nav-link">Challenges</a>
             <a href="leaderboard" class="nav-link">Leaderboard</a>
+            <a href="profile" class="nav-link">Profile</a>
             <% if (currentUser.isAdmin()) { %>
                 <a href="admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
             <% } %>
@@ -76,7 +78,7 @@
             <div class="card-panel stat-card">
                 <span class="stat-label">Calories Burned</span>
                 <div style="display: flex; align-items: baseline;">
-                    <span class="stat-value"><%= request.getAttribute("totalCalories") != null ? request.getAttribute("totalCalories") : 0 %></span>
+                    <span class="stat-value"><%= totalCalories %></span>
                     <span class="stat-unit">kcal</span>
                 </div>
             </div>
@@ -140,7 +142,10 @@
 
             <!-- Target Goals Progress -->
             <div class="card-panel" style="padding: 1.5rem;">
-                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Target Goals Progress</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Target Goals Progress</h3>
+                    <a href="workouts" class="btn btn-emerald" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">+ Set Goal</a>
+                </div>
 
                 <% if (goals != null && !goals.isEmpty()) {
                     for (Goal g : goals) { %>
@@ -157,8 +162,22 @@
                             </div>
                         </div>
                 <%  }
-                   } else { %>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin-top: 1.5rem;">No active goals set yet. Add a target goal in Workouts.</p>
+                   } else {
+                       double weeklyTarget = 2000.0;
+                       double pct = Math.min(100.0, Math.round((totalCalories / weeklyTarget) * 1000.0) / 10.0);
+                %>
+                    <div style="margin-bottom: 1.25rem; padding-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                            <strong style="font-size: 0.95rem; color: var(--text-main);">Weekly Target: 2,000 kcal</strong>
+                            <span style="font-size: 0.85rem; color: var(--primary-emerald-hover); font-weight: 800;"><%= pct %>%</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                            <%= totalCalories %> / 2000.0 kcal
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: <%= pct %>%;"></div>
+                        </div>
+                    </div>
                 <% } %>
             </div>
 

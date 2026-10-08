@@ -21,7 +21,7 @@
 </head>
 <body>
 
-    <!-- Light Frosted Navigation Bar -->
+    <!-- Header Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
@@ -33,6 +33,7 @@
             <a href="workouts" class="nav-link">Workouts</a>
             <a href="challenges" class="nav-link">Challenges</a>
             <a href="leaderboard" class="nav-link">Leaderboard</a>
+            <a href="profile" class="nav-link">Profile</a>
             <a href="admin" class="nav-link active" style="color: var(--warning);">Admin Panel</a>
             <div class="user-badge">
                 <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
@@ -72,7 +73,7 @@
                                     <td><strong style="color: var(--text-main);"><%= u.getName() %></strong></td>
                                     <td><%= u.getEmail() %></td>
                                     <td>
-                                        <span style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 10px; font-weight: 800; background: <%= u.isAdmin() ? "var(--warning)" : "var(--primary-light)" %>; color: <%= u.isAdmin() ? "#ffffff" : "var(--primary)" %>;">
+                                        <span style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 10px; font-weight: 800; background: <%= u.isAdmin() ? "var(--warning)" : "var(--badge-blue-light)" %>; color: <%= u.isAdmin() ? "#ffffff" : "var(--badge-blue)" %>;">
                                             <%= u.getRole() %>
                                         </span>
                                     </td>
@@ -85,7 +86,7 @@
                                                 <button type="submit" class="btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; background: #f1f5f9; color: var(--text-main); min-height: auto;">Demote to User</button>
                                             <% } else { %>
                                                 <input type="hidden" name="role" value="ADMIN">
-                                                <button type="submit" class="btn btn-primary" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">Promote to Admin</button>
+                                                <button type="submit" class="btn btn-emerald" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">Promote to Admin</button>
                                             <% } %>
                                         </form>
                                     </td>
@@ -104,7 +105,7 @@
                     <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Live System Activity Logs (Multithreaded)</h3>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">Asymptotically logged via managed ExecutorService fixed thread pool (Executors.newFixedThreadPool(3)).</p>
                 </div>
-                <span style="font-size: 0.8rem; background: var(--primary-light); border: 1px solid rgba(37, 99, 235, 0.3); color: var(--primary); padding: 0.3rem 0.75rem; border-radius: 20px; font-weight: 700;">
+                <span style="font-size: 0.8rem; background: var(--badge-blue-light); border: 1px solid rgba(37, 99, 235, 0.3); color: var(--badge-blue); padding: 0.3rem 0.75rem; border-radius: 20px; font-weight: 700;">
                     Pool Size: 3 Worker Threads
                 </span>
             </div>
@@ -128,12 +129,12 @@
                                     <td>#<%= log.getId() %></td>
                                     <td><%= log.getTimestamp() %></td>
                                     <td>
-                                        <code style="color: var(--warning); font-size: 0.8rem; background: var(--warning-light); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700;">
+                                        <code style="color: var(--warning); font-size: 0.8rem; background: var(--badge-fire-light); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700;">
                                             <%= log.getThreadName() != null ? log.getThreadName() : "main" %>
                                         </code>
                                     </td>
                                     <td>
-                                        <span style="color: var(--primary); font-weight: 800; font-size: 0.85rem;">
+                                        <span style="color: var(--badge-blue); font-weight: 800; font-size: 0.85rem;">
                                             <%= log.getAction() %>
                                         </span>
                                     </td>
