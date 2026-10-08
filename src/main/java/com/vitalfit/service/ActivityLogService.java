@@ -14,15 +14,15 @@ public class ActivityLogService {
     private static final ExecutorService executor = Executors.newFixedThreadPool(3);
 
     public static void logAsync(String userEmail, String action, String details) {
-        final String currentThreadName = Thread.currentThread().getName();
         executor.submit(() -> {
+            String workerThreadName = Thread.currentThread().getName();
             String sql = "INSERT INTO activity_log (user_email, action, details, thread_name) VALUES (?, ?, ?, ?)";
             try (Connection conn = DBConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, userEmail);
                 stmt.setString(2, action);
                 stmt.setString(3, details);
-                stmt.setString(4, currentThreadName);
+                stmt.setString(4, workerThreadName);
                 stmt.executeUpdate();
             } catch (SQLException e) {
                 System.err.println("Failed to write async activity log: " + e.getMessage());

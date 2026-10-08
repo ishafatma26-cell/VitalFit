@@ -8,6 +8,7 @@ public class Workout {
     private int userId;
     private String userName; // Convenient for leaderboards/admin view
     private String activityType;
+    private String intensity; // Low, Medium, High
     private int durationMinutes;
     private int caloriesBurned;
     private double distanceKm;
@@ -17,10 +18,11 @@ public class Workout {
 
     public Workout() {}
 
-    public Workout(int id, int userId, String activityType, int durationMinutes, int caloriesBurned, double distanceKm, Date workoutDate, String notes) {
+    public Workout(int id, int userId, String activityType, String intensity, int durationMinutes, int caloriesBurned, double distanceKm, Date workoutDate, String notes) {
         this.id = id;
         this.userId = userId;
         this.activityType = activityType;
+        this.intensity = intensity != null ? intensity : "Medium";
         this.durationMinutes = durationMinutes;
         this.caloriesBurned = caloriesBurned;
         this.distanceKm = distanceKm;
@@ -58,6 +60,14 @@ public class Workout {
 
     public void setActivityType(String activityType) {
         this.activityType = activityType;
+    }
+
+    public String getIntensity() {
+        return intensity != null ? intensity : "Medium";
+    }
+
+    public void setIntensity(String intensity) {
+        this.intensity = intensity;
     }
 
     public int getDurationMinutes() {
