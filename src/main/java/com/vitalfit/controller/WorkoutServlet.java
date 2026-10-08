@@ -79,17 +79,22 @@ public class WorkoutServlet extends HttpServlet {
             } else {
                 // Add Workout
                 String activityType = req.getParameter("activityType");
+                String intensity = req.getParameter("intensity");
+                if (intensity == null || intensity.isBlank()) {
+                    intensity = "Medium";
+                }
                 int duration = Integer.parseInt(req.getParameter("duration"));
                 int calories = Integer.parseInt(req.getParameter("calories"));
-                double distance = Double.parseDouble(req.getParameter("distance"));
+                String distStr = req.getParameter("distance");
+                double distance = (distStr != null && !distStr.isBlank()) ? Double.parseDouble(distStr) : 0.0;
                 String dateStr = req.getParameter("workoutDate");
                 String notes = req.getParameter("notes");
 
                 Date workoutDate = (dateStr != null && !dateStr.isBlank()) ? Date.valueOf(dateStr) : new Date(System.currentTimeMillis());
 
-                Workout w = new Workout(0, user.getId(), activityType, duration, calories, distance, workoutDate, notes);
+                Workout w = new Workout(0, user.getId(), activityType, intensity, duration, calories, distance, workoutDate, notes);
                 workoutDAO.addWorkout(w);
-                ActivityLogService.logAsync(user.getEmail(), "LOG_WORKOUT", "Logged workout: " + activityType + " (" + calories + " kcal)");
+                ActivityLogService.logAsync(user.getEmail(), "LOG_WORKOUT", "Logged workout: " + activityType + " (" + intensity + ", " + calories + " kcal)");
             }
 
             resp.sendRedirect(req.getContextPath() + "/workouts");

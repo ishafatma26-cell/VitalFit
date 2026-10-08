@@ -21,9 +21,10 @@
 </head>
 <body>
 
+    <!-- Fixed Header Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
-            <div class="brand-icon">V</div>
+            <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
         <div class="nav-links">
@@ -32,10 +33,10 @@
             <a href="challenges" class="nav-link">Challenges</a>
             <a href="leaderboard" class="nav-link active">Leaderboard</a>
             <% if (currentUser.isAdmin()) { %>
-                <a href="admin" class="nav-link" style="color: var(--warning);">Admin Portal</a>
+                <a href="admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
             <% } %>
             <div class="user-badge">
-                <span style="font-size: 0.85rem; font-weight: 600;"><%= currentUser.getName() %></span>
+                <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
             <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem;">Logout</a>
@@ -45,12 +46,12 @@
     <div class="main-container">
         <div class="page-header">
             <div>
-                <h1 class="page-title">Community Leaderboard</h1>
-                <p class="page-subtitle">In-memory telemetry aggregation & sorting processed by Java 8+ Stream API.</p>
+                <h1 class="page-title">Community Telemetry Leaderboard</h1>
+                <p class="page-subtitle">Real-time in-memory workout aggregation driven by Java 8+ Stream API (Collectors.groupingBy & sorting).</p>
             </div>
         </div>
 
-        <!-- Podium Section for Top 3 -->
+        <!-- 3-Tier Podium Showcase for Rank 1 (Gold), Rank 2 (Silver), Rank 3 (Bronze) -->
         <% if (podium != null && !podium.isEmpty()) { %>
             <div class="podium-grid">
                 <% for (LeaderboardEntry p : podium) {
@@ -60,10 +61,10 @@
                     <div class="glass-panel podium-card <%= podiumClass %>">
                         <div class="badge-rank <%= rankClass %>">#<%= p.getRank() %></div>
                         <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;"><%= p.getUserName() %></h3>
-                        <div style="font-size: 2rem; font-weight: 800; color: var(--accent-cyan); margin: 0.5rem 0;">
-                            <%= p.getTotalCalories() %> <span style="font-size: 0.9rem; color: var(--text-muted);">kcal</span>
+                        <div style="font-size: 2.1rem; font-weight: 800; color: var(--accent-cyan); margin: 0.5rem 0; line-height: 1;">
+                            <%= p.getTotalCalories() %> <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">kcal</span>
                         </div>
-                        <div style="display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                        <div style="display: flex; gap: 0.85rem; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem;">
                             <span>🏃 <%= p.getTotalDistance() %> km</span>
                             <span>⏱ <%= p.getTotalDuration() %> mins</span>
                             <span>🔥 <%= p.getTotalWorkouts() %> workouts</span>
@@ -73,7 +74,7 @@
             </div>
         <% } %>
 
-        <!-- Full Leaderboard Table -->
+        <!-- Full Tabular Rankings Below Podium -->
         <div class="glass-panel" style="padding: 1.5rem;">
             <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem;">Overall Standings</h3>
 
@@ -82,11 +83,11 @@
                     <thead>
                         <tr>
                             <th>Rank</th>
-                            <th>Athlete</th>
-                            <th>Calories Burned</th>
+                            <th>Athlete Name</th>
+                            <th>Total Calories Burned</th>
                             <th>Total Distance</th>
                             <th>Active Duration</th>
-                            <th>Workouts Logged</th>
+                            <th>Completed Workouts</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,7 +104,7 @@
                                     <td>
                                         <strong style="color: #fff;"><%= entry.getUserName() %></strong>
                                         <% if (isMe) { %>
-                                            <span style="font-size: 0.7rem; padding: 0.15rem 0.4rem; background: var(--accent-gradient); border-radius: 10px; color: #fff; margin-left: 0.5rem;">YOU</span>
+                                            <span style="font-size: 0.7rem; padding: 0.15rem 0.4rem; background: var(--accent-gradient); border-radius: 10px; color: #fff; margin-left: 0.5rem; font-weight: 800;">YOU</span>
                                         <% } %>
                                     </td>
                                     <td><span style="color: var(--accent-cyan); font-weight: 800; font-size: 1.05rem;"><%= entry.getTotalCalories() %> kcal</span></td>
@@ -114,7 +115,7 @@
                         <%  }
                            } else { %>
                             <tr>
-                                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 3rem;">No leaderboard records available yet. Log workouts to populate rankings!</td>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 3rem;">No leaderboard records available. Log workouts to populate rankings!</td>
                             </tr>
                         <% } %>
                     </tbody>

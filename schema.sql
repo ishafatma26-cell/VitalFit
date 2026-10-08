@@ -22,6 +22,7 @@ CREATE TABLE workouts (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     activity_type VARCHAR(50) NOT NULL,
+    intensity VARCHAR(20) NOT NULL DEFAULT 'Medium',
     duration_minutes INT NOT NULL CHECK (duration_minutes > 0),
     calories_burned INT NOT NULL CHECK (calories_burned >= 0),
     distance_km NUMERIC(5,2) DEFAULT 0.0,
@@ -87,12 +88,12 @@ INSERT INTO users (name, email, password_hash, role) VALUES
 ('Alex Rivera', 'alex@vitalfit.demo', '$2a$10$8.UnVuG9HHgffUDAlk8qfOUVGkq8zg3E69k3Tq1s.v.pYy1z2uSsm', 'USER'),
 ('Elena Rostova', 'elena@vitalfit.demo', '$2a$10$8.UnVuG9HHgffUDAlk8qfOUVGkq8zg3E69k3Tq1s.v.pYy1z2uSsm', 'USER');
 
-INSERT INTO workouts (user_id, activity_type, duration_minutes, calories_burned, distance_km, workout_date, notes) VALUES
-(1, 'Running', 45, 480, 7.50, CURRENT_DATE - 1, 'Morning trail run'),
-(1, 'Cycling', 60, 620, 22.00, CURRENT_DATE, 'Interval speed cycling'),
-(3, 'HIIT Training', 30, 350, 0.00, CURRENT_DATE - 2, 'Full body circuit'),
-(3, 'Running', 50, 550, 8.20, CURRENT_DATE, 'Pace run'),
-(4, 'Swimming', 60, 700, 2.50, CURRENT_DATE - 1, 'Freestyle endurance');
+INSERT INTO workouts (user_id, activity_type, intensity, duration_minutes, calories_burned, distance_km, workout_date, notes) VALUES
+(1, 'Running', 'High', 45, 480, 7.50, CURRENT_DATE - 1, 'Morning trail run'),
+(1, 'Cycling', 'Medium', 60, 620, 22.00, CURRENT_DATE, 'Interval speed cycling'),
+(3, 'HIIT Training', 'High', 30, 350, 0.00, CURRENT_DATE - 2, 'Full body circuit'),
+(3, 'Running', 'Medium', 50, 550, 8.20, CURRENT_DATE, 'Pace run'),
+(4, 'Swimming', 'Low', 60, 700, 2.50, CURRENT_DATE - 1, 'Freestyle endurance');
 
 INSERT INTO goals (user_id, title, target_value, current_value, unit, status) VALUES
 (1, 'Burn 5000 Calories', 5000.00, 1100.00, 'kcal', 'IN_PROGRESS'),

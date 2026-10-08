@@ -11,17 +11,18 @@ import java.util.List;
 public class WorkoutDAO {
 
     public boolean addWorkout(Workout workout) throws SQLException {
-        String sql = "INSERT INTO workouts (user_id, activity_type, duration_minutes, calories_burned, distance_km, workout_date, notes) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO workouts (user_id, activity_type, intensity, duration_minutes, calories_burned, distance_km, workout_date, notes) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, workout.getUserId());
             stmt.setString(2, workout.getActivityType());
-            stmt.setInt(3, workout.getDurationMinutes());
-            stmt.setInt(4, workout.getCaloriesBurned());
-            stmt.setDouble(5, workout.getDistanceKm());
-            stmt.setDate(6, workout.getWorkoutDate() != null ? workout.getWorkoutDate() : new Date(System.currentTimeMillis()));
-            stmt.setString(7, workout.getNotes());
+            stmt.setString(3, workout.getIntensity() != null ? workout.getIntensity() : "Medium");
+            stmt.setInt(4, workout.getDurationMinutes());
+            stmt.setInt(5, workout.getCaloriesBurned());
+            stmt.setDouble(6, workout.getDistanceKm());
+            stmt.setDate(7, workout.getWorkoutDate() != null ? workout.getWorkoutDate() : new Date(System.currentTimeMillis()));
+            stmt.setString(8, workout.getNotes());
 
             int affected = stmt.executeUpdate();
             if (affected > 0) {
@@ -39,7 +40,7 @@ public class WorkoutDAO {
 
     public List<Workout> getWorkoutsByUserId(int userId) throws SQLException {
         List<Workout> list = new ArrayList<>();
-        String sql = "SELECT id, user_id, activity_type, duration_minutes, calories_burned, distance_km, workout_date, notes, created_at " +
+        String sql = "SELECT id, user_id, activity_type, intensity, duration_minutes, calories_burned, distance_km, workout_date, notes, created_at " +
                      "FROM workouts WHERE user_id = ? ORDER BY workout_date DESC, id DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -50,6 +51,7 @@ public class WorkoutDAO {
                             rs.getInt("id"),
                             rs.getInt("user_id"),
                             rs.getString("activity_type"),
+                            rs.getString("intensity"),
                             rs.getInt("duration_minutes"),
                             rs.getInt("calories_burned"),
                             rs.getDouble("distance_km"),
@@ -66,7 +68,7 @@ public class WorkoutDAO {
 
     public List<Workout> getAllWorkoutsWithUserNames() throws SQLException {
         List<Workout> list = new ArrayList<>();
-        String sql = "SELECT w.id, w.user_id, u.name as user_name, w.activity_type, w.duration_minutes, w.calories_burned, " +
+        String sql = "SELECT w.id, w.user_id, u.name as user_name, w.activity_type, w.intensity, w.duration_minutes, w.calories_burned, " +
                      "w.distance_km, w.workout_date, w.notes, w.created_at " +
                      "FROM workouts w JOIN users u ON w.user_id = u.id ORDER BY w.workout_date DESC, w.id DESC";
         try (Connection conn = DBConnection.getConnection();
@@ -77,6 +79,7 @@ public class WorkoutDAO {
                         rs.getInt("id"),
                         rs.getInt("user_id"),
                         rs.getString("activity_type"),
+                        rs.getString("intensity"),
                         rs.getInt("duration_minutes"),
                         rs.getInt("calories_burned"),
                         rs.getDouble("distance_km"),

@@ -2,6 +2,7 @@
 <%@ page import="com.vitalfit.model.User" %>
 <%@ page import="com.vitalfit.model.Challenge" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.stream.Collectors" %>
 <%
     User currentUser = (User) session.getAttribute("user");
     if (currentUser == null) {
@@ -9,6 +10,9 @@
         return;
     }
     List<Challenge> challenges = (List<Challenge>) request.getAttribute("challenges");
+    List<Challenge> enrolledChallenges = challenges != null ?
+            challenges.stream().filter(Challenge::isJoined).collect(Collectors.toList()) : null;
+
     String flashMessage = (String) session.getAttribute("flashMessage");
     if (flashMessage != null) {
         session.removeAttribute("flashMessage");
@@ -19,14 +23,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Challenges - VitalFit</title>
+    <title>Challenges & ACID Transactions - VitalFit</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
+    <!-- Fixed Header Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
-            <div class="brand-icon">V</div>
+            <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
         <div class="nav-links">
@@ -35,10 +40,10 @@
             <a href="challenges" class="nav-link active">Challenges</a>
             <a href="leaderboard" class="nav-link">Leaderboard</a>
             <% if (currentUser.isAdmin()) { %>
-                <a href="admin" class="nav-link" style="color: var(--warning);">Admin Portal</a>
+                <a href="admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
             <% } %>
             <div class="user-badge">
-                <span style="font-size: 0.85rem; font-weight: 600;"><%= currentUser.getName() %></span>
+                <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
             <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem;">Logout</a>
@@ -48,8 +53,8 @@
     <div class="main-container">
         <div class="page-header">
             <div>
-                <h1 class="page-title">Community Fitness Challenges</h1>
-                <p class="page-subtitle">Join community competitions powered by transactional ACID backend verification.</p>
+                <h1 class="page-title">Community Endurance Challenges</h1>
+                <p class="page-subtitle">Transactional registration engine powered by manual ACID database autoCommit(false) verification.</p>
             </div>
         </div>
 
@@ -58,9 +63,9 @@
         <% } %>
 
         <% if (currentUser.isAdmin()) { %>
-            <!-- Admin Challenge Creator -->
+            <!-- Admin Challenge Launch Card -->
             <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--warning);">+ Admin: Launch New Challenge</h3>
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--warning);">+ Admin: Launch Community Challenge</h3>
                 <form action="challenges" method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: flex-end;">
                     <input type="hidden" name="action" value="create">
                     <div>
@@ -98,18 +103,19 @@
             </div>
         <% } %>
 
-        <!-- Challenge Cards Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+        <!-- Discovery Grid of Active Community Challenges -->
+        <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem;">Discover Active Challenges</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
             <% if (challenges != null && !challenges.isEmpty()) {
                 for (Challenge c : challenges) { %>
                     <div class="glass-panel" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--accent-cyan); background: rgba(6, 182, 212, 0.1); padding: 0.25rem 0.6rem; border-radius: 20px;">
+                                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 800; color: var(--accent-cyan); background: rgba(6, 182, 212, 0.1); padding: 0.25rem 0.6rem; border-radius: 20px;">
                                     <%= c.getTargetType() %>
                                 </span>
-                                <span style="font-size: 0.8rem; color: var(--text-muted);">
-                                    👥 <%= c.getParticipantCount() %> Joined
+                                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">
+                                    👥 <%= c.getParticipantCount() %> Enrolled
                                 </span>
                             </div>
                             <h3 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;"><%= c.getTitle() %></h3>
@@ -134,7 +140,7 @@
                             <input type="hidden" name="challengeId" value="<%= c.getId() %>">
                             <% if (c.isJoined()) { %>
                                 <button type="button" class="btn" style="width: 100%; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--success); cursor: default;" disabled>
-                                    ✓ Joined Challenge
+                                    ✓ Enrolled (ACID Verified)
                                 </button>
                             <% } else { %>
                                 <button type="submit" class="btn btn-primary" style="width: 100%;">
@@ -149,6 +155,43 @@
                     No challenges active currently. Check back soon!
                 </div>
             <% } %>
+        </div>
+
+        <!-- Section: My Enrolled Challenges -->
+        <div class="glass-panel" style="padding: 1.5rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem;">My Enrolled Challenges</h3>
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Challenge Title</th>
+                            <th>Target Metric</th>
+                            <th>Goal Requirement</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (enrolledChallenges != null && !enrolledChallenges.isEmpty()) {
+                            for (Challenge ec : enrolledChallenges) { %>
+                                <tr>
+                                    <td><strong style="color: #fff;"><%= ec.getTitle() %></strong></td>
+                                    <td><span style="color: var(--accent-cyan); font-weight: 700;"><%= ec.getTargetType() %></span></td>
+                                    <td><%= ec.getTargetGoal() %> <%= ec.getTargetType() %></td>
+                                    <td><%= ec.getStartDate() %></td>
+                                    <td><%= ec.getEndDate() %></td>
+                                    <td><span style="color: var(--success); font-weight: 800;">ACTIVE</span></td>
+                                </tr>
+                        <%  }
+                           } else { %>
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">You are not enrolled in any active challenges yet.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
