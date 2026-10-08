@@ -5,7 +5,9 @@ import com.vitalfit.model.Challenge;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ChallengeDAO {
 
@@ -38,6 +40,21 @@ public class ChallengeDAO {
             }
         }
         return challenges;
+    }
+
+    public Set<Integer> getUserChallengeIds(int userId) throws SQLException {
+        Set<Integer> set = new HashSet<>();
+        String sql = "SELECT challenge_id FROM challenge_participants WHERE user_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    set.add(rs.getInt("challenge_id"));
+                }
+            }
+        }
+        return set;
     }
 
     public Challenge getChallengeById(int challengeId) throws SQLException {

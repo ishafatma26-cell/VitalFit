@@ -81,30 +81,34 @@ CREATE INDEX idx_workouts_date ON workouts(workout_date);
 CREATE INDEX idx_goals_user_id ON goals(user_id);
 CREATE INDEX idx_activity_log_timestamp ON activity_log(timestamp);
 
--- Seed Data
+-- Seed Data (Valid 2026 dates)
 INSERT INTO users (name, email, password_hash, role) VALUES
-('Demo User', 'user@vitalfit.demo', '$2a$10$8.UnVuG9HHgffUDAlk8qfOUVGkq8zg3E69k3Tq1s.v.pYy1z2uSsm', 'USER'),
+('Demo Athlete', 'user@vitalfit.demo', '$2a$10$8.UnVuG9HHgffUDAlk8qfOUVGkq8zg3E69k3Tq1s.v.pYy1z2uSsm', 'USER'),
 ('Admin User', 'admin@vitalfit.com', '$2a$10$8.UnVuG9HHgffUDAlk8qfOUVGkq8zg3E69k3Tq1s.v.pYy1z2uSsm', 'ADMIN'),
-('Alex Rivera', 'alex@vitalfit.demo', '$2a$10$8.UnVuG9HHgffUDAlk8qfOUVGkq8zg3E69k3Tq1s.v.pYy1z2uSsm', 'USER'),
-('Elena Rostova', 'elena@vitalfit.demo', '$2a$10$8.UnVuG9HHgffUDAlk8qfOUVGkq8zg3E69k3Tq1s.v.pYy1z2uSsm', 'USER');
+('Aarav Sharma', 'aarav@vitalfit.demo', '$2a$10$8.UnVuG9HHgffUDAlk8qfOUVGkq8zg3E69k3Tq1s.v.pYy1z2uSsm', 'USER'),
+('Neha Patel', 'neha@vitalfit.demo', '$2a$10$8.UnVuG9HHgffUDAlk8qfOUVGkq8zg3E69k3Tq1s.v.pYy1z2uSsm', 'USER');
 
 INSERT INTO workouts (user_id, activity_type, intensity, duration_minutes, calories_burned, distance_km, workout_date, notes) VALUES
-(1, 'Running', 'High', 45, 480, 7.50, CURRENT_DATE - 1, 'Morning trail run'),
-(1, 'Cycling', 'Medium', 60, 620, 22.00, CURRENT_DATE, 'Interval speed cycling'),
-(3, 'HIIT Training', 'High', 30, 350, 0.00, CURRENT_DATE - 2, 'Full body circuit'),
-(3, 'Running', 'Medium', 50, 550, 8.20, CURRENT_DATE, 'Pace run'),
-(4, 'Swimming', 'Low', 60, 700, 2.50, CURRENT_DATE - 1, 'Freestyle endurance');
+(1, 'Running', 'High', 45, 520, 8.50, DATE '2026-03-01', 'Morning outdoor trail run'),
+(1, 'Cycling', 'Medium', 60, 640, 22.50, DATE '2026-03-02', 'Speed intervals'),
+(2, 'HIIT', 'High', 45, 480, 0.00, DATE '2026-03-01', 'Full body circuit'),
+(3, 'Cycling', 'High', 90, 950, 35.00, DATE '2026-03-01', 'Long distance endurance ride'),
+(3, 'Running', 'High', 60, 720, 11.20, DATE '2026-03-02', 'Tempo tempo pace run'),
+(4, 'Swimming', 'Medium', 50, 580, 2.80, DATE '2026-03-01', 'Freestyle endurance laps'),
+(4, 'Yoga', 'Low', 40, 210, 0.00, DATE '2026-03-02', 'Recovery mobility stretch');
 
 INSERT INTO goals (user_id, title, target_value, current_value, unit, status) VALUES
-(1, 'Burn 5000 Calories', 5000.00, 1100.00, 'kcal', 'IN_PROGRESS'),
-(1, 'Run 50km This Month', 50.00, 7.50, 'km', 'IN_PROGRESS'),
-(3, 'Weekly Workout Count', 5.00, 2.00, 'workouts', 'IN_PROGRESS');
+(1, 'Burn 5000 Calories', 5000.00, 1160.00, 'kcal', 'IN_PROGRESS'),
+(1, 'Run 50km This Month', 50.00, 8.50, 'km', 'IN_PROGRESS'),
+(3, 'Weekly Cycling Distance', 100.00, 35.00, 'km', 'IN_PROGRESS');
 
 INSERT INTO challenges (title, description, target_type, target_goal, start_date, end_date) VALUES
-('100K Steps Challenge', 'Reach 100,000 total steps over 14 days to boost cardiovascular health.', 'Steps', 100000.00, CURRENT_DATE - 3, CURRENT_DATE + 11),
-('Summer Calorie Burner', 'Burn 10,000 kcal through high intensity cardio and strength training.', 'Calories', 10000.00, CURRENT_DATE, CURRENT_DATE + 30),
-('Marathon Endurance Drive', 'Complete a total cumulative distance of 42.2km.', 'Distance', 42.20, CURRENT_DATE - 5, CURRENT_DATE + 10);
+('30-Day Cardio Shred', 'Complete 10,000 active calories through high intensity cardio and running.', 'Calories', 10000.00, DATE '2026-03-01', DATE '2026-03-31'),
+('Century Ride 100km', 'Accumulate 100km of outdoor or indoor cycling distance over 14 days.', 'Distance', 100.00, DATE '2026-03-01', DATE '2026-03-15'),
+('500-Set Strength Matrix', 'Complete 500 total sets across strength and resistance training sessions.', 'Sets', 500.00, DATE '2026-03-05', DATE '2026-04-05'),
+('Core Calorie Burn', 'Burn 5,000 kcal through core, HIIT, and functional fitness workouts.', 'Calories', 5000.00, DATE '2026-03-01', DATE '2026-03-20');
 
 INSERT INTO challenge_participants (challenge_id, user_id, status) VALUES
 (1, 1, 'ACTIVE'),
-(2, 3, 'ACTIVE');
+(2, 3, 'ACTIVE'),
+(4, 1, 'ACTIVE');

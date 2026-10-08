@@ -21,12 +21,13 @@
 </head>
 <body>
 
-    <!-- Fixed Header Navigation Bar -->
+    <!-- Light Frosted Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
             <span>VitalFit Admin</span>
         </a>
+        <button class="mobile-nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
         <div class="nav-links">
             <a href="dashboard" class="nav-link">Dashboard</a>
             <a href="workouts" class="nav-link">Workouts</a>
@@ -37,7 +38,7 @@
                 <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
-            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem;">Logout</a>
+            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
         </div>
     </nav>
 
@@ -50,9 +51,9 @@
         </div>
 
         <!-- Section 1: User Management -->
-        <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem;">Registered User Management</h3>
-            <div class="table-container">
+        <div class="card-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Registered User Management</h3>
+            <div class="table-responsive">
                 <table class="custom-table">
                     <thead>
                         <tr>
@@ -68,10 +69,10 @@
                             for (User u : userList) { %>
                                 <tr>
                                     <td>#<%= u.getId() %></td>
-                                    <td><strong style="color: #fff;"><%= u.getName() %></strong></td>
+                                    <td><strong style="color: var(--text-main);"><%= u.getName() %></strong></td>
                                     <td><%= u.getEmail() %></td>
                                     <td>
-                                        <span style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 10px; font-weight: 800; background: <%= u.isAdmin() ? "var(--accent-gold)" : "rgba(255, 255, 255, 0.1)" %>; color: #fff;">
+                                        <span style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 10px; font-weight: 800; background: <%= u.isAdmin() ? "var(--warning)" : "var(--primary-light)" %>; color: <%= u.isAdmin() ? "#ffffff" : "var(--primary)" %>;">
                                             <%= u.getRole() %>
                                         </span>
                                     </td>
@@ -81,10 +82,10 @@
                                             <input type="hidden" name="userId" value="<%= u.getId() %>">
                                             <% if (u.isAdmin()) { %>
                                                 <input type="hidden" name="role" value="USER">
-                                                <button type="submit" class="btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; background: rgba(255, 255, 255, 0.1); color: #fff;">Demote to User</button>
+                                                <button type="submit" class="btn" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; background: #f1f5f9; color: var(--text-main); min-height: auto;">Demote to User</button>
                                             <% } else { %>
                                                 <input type="hidden" name="role" value="ADMIN">
-                                                <button type="submit" class="btn btn-primary" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">Promote to Admin</button>
+                                                <button type="submit" class="btn btn-primary" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">Promote to Admin</button>
                                             <% } %>
                                         </form>
                                     </td>
@@ -97,18 +98,18 @@
         </div>
 
         <!-- Section 2: Live System Activity Logs (Multithreaded Showcase) -->
-        <div class="glass-panel" style="padding: 1.5rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div class="card-panel" style="padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
                 <div>
-                    <h3 style="font-size: 1.2rem; font-weight: 700;">Live System Activity Logs (Multithreaded)</h3>
+                    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Live System Activity Logs (Multithreaded)</h3>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">Asymptotically logged via managed ExecutorService fixed thread pool (Executors.newFixedThreadPool(3)).</p>
                 </div>
-                <span style="font-size: 0.8rem; background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--accent-cyan); padding: 0.3rem 0.75rem; border-radius: 20px; font-weight: 700;">
-                    Pool Size: 3 Workers
+                <span style="font-size: 0.8rem; background: var(--primary-light); border: 1px solid rgba(37, 99, 235, 0.3); color: var(--primary); padding: 0.3rem 0.75rem; border-radius: 20px; font-weight: 700;">
+                    Pool Size: 3 Worker Threads
                 </span>
             </div>
 
-            <div class="table-container">
+            <div class="table-responsive">
                 <table class="custom-table">
                     <thead>
                         <tr>
@@ -127,16 +128,16 @@
                                     <td>#<%= log.getId() %></td>
                                     <td><%= log.getTimestamp() %></td>
                                     <td>
-                                        <code style="color: var(--warning); font-size: 0.8rem; background: rgba(245, 158, 11, 0.1); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700;">
+                                        <code style="color: var(--warning); font-size: 0.8rem; background: var(--warning-light); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700;">
                                             <%= log.getThreadName() != null ? log.getThreadName() : "main" %>
                                         </code>
                                     </td>
                                     <td>
-                                        <span style="color: var(--accent-cyan); font-weight: 800; font-size: 0.85rem;">
+                                        <span style="color: var(--primary); font-weight: 800; font-size: 0.85rem;">
                                             <%= log.getAction() %>
                                         </span>
                                     </td>
-                                    <td><strong style="color: #fff;"><%= log.getUserEmail() %></strong></td>
+                                    <td><strong style="color: var(--text-main);"><%= log.getUserEmail() %></strong></td>
                                     <td><%= log.getDetails() %></td>
                                 </tr>
                         <%  }
