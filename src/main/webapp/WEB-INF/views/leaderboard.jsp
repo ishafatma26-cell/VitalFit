@@ -21,12 +21,13 @@
 </head>
 <body>
 
-    <!-- Fixed Header Navigation Bar -->
+    <!-- Light Frosted Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
+        <button class="mobile-nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
         <div class="nav-links">
             <a href="dashboard" class="nav-link">Dashboard</a>
             <a href="workouts" class="nav-link">Workouts</a>
@@ -39,7 +40,7 @@
                 <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
-            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem;">Logout</a>
+            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
         </div>
     </nav>
 
@@ -47,21 +48,21 @@
         <div class="page-header">
             <div>
                 <h1 class="page-title">Community Telemetry Leaderboard</h1>
-                <p class="page-subtitle">Real-time in-memory workout aggregation driven by Java 8+ Stream API (Collectors.groupingBy & sorting).</p>
+                <p class="page-subtitle">Real-time workout volume and calorie aggregation using Java 8+ Stream API (Collectors.groupingBy & summingInt).</p>
             </div>
         </div>
 
-        <!-- 3-Tier Podium Showcase for Rank 1 (Gold), Rank 2 (Silver), Rank 3 (Bronze) -->
+        <!-- 3-Tier Visual Podium Showcase -->
         <% if (podium != null && !podium.isEmpty()) { %>
             <div class="podium-grid">
                 <% for (LeaderboardEntry p : podium) {
                     String podiumClass = "podium-" + p.getRank();
                     String rankClass = "rank-" + p.getRank();
                 %>
-                    <div class="glass-panel podium-card <%= podiumClass %>">
+                    <div class="card-panel podium-card <%= podiumClass %>">
                         <div class="badge-rank <%= rankClass %>">#<%= p.getRank() %></div>
-                        <h3 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;"><%= p.getUserName() %></h3>
-                        <div style="font-size: 2.1rem; font-weight: 800; color: var(--accent-cyan); margin: 0.5rem 0; line-height: 1;">
+                        <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;"><%= p.getUserName() %></h3>
+                        <div style="font-size: 2.1rem; font-weight: 800; color: var(--primary); margin: 0.5rem 0; line-height: 1;">
                             <%= p.getTotalCalories() %> <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">kcal</span>
                         </div>
                         <div style="display: flex; gap: 0.85rem; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem;">
@@ -75,10 +76,10 @@
         <% } %>
 
         <!-- Full Tabular Rankings Below Podium -->
-        <div class="glass-panel" style="padding: 1.5rem;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem;">Overall Standings</h3>
+        <div class="card-panel" style="padding: 1.5rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Overall Athlete Standings</h3>
 
-            <div class="table-container">
+            <div class="table-responsive">
                 <table class="custom-table">
                     <thead>
                         <tr>
@@ -95,19 +96,19 @@
                             for (LeaderboardEntry entry : leaderboard) {
                                 boolean isMe = entry.getUserId() == currentUser.getId();
                         %>
-                                <tr style="<%= isMe ? "background: rgba(6, 182, 212, 0.1);" : "" %>">
+                                <tr style="<%= isMe ? "background: var(--primary-light);" : "" %>">
                                     <td>
-                                        <strong style="font-size: 1.1rem; color: <%= entry.getRank() <= 3 ? "var(--accent-cyan)" : "var(--text-muted)" %>;">
+                                        <strong style="font-size: 1.1rem; color: <%= entry.getRank() <= 3 ? "var(--primary)" : "var(--text-muted)" %>;">
                                             #<%= entry.getRank() %>
                                         </strong>
                                     </td>
                                     <td>
-                                        <strong style="color: #fff;"><%= entry.getUserName() %></strong>
+                                        <strong style="color: var(--text-main);"><%= entry.getUserName() %></strong>
                                         <% if (isMe) { %>
-                                            <span style="font-size: 0.7rem; padding: 0.15rem 0.4rem; background: var(--accent-gradient); border-radius: 10px; color: #fff; margin-left: 0.5rem; font-weight: 800;">YOU</span>
+                                            <span style="font-size: 0.7rem; padding: 0.15rem 0.4rem; background: var(--primary); border-radius: 10px; color: #fff; margin-left: 0.5rem; font-weight: 800;">YOU</span>
                                         <% } %>
                                     </td>
-                                    <td><span style="color: var(--accent-cyan); font-weight: 800; font-size: 1.05rem;"><%= entry.getTotalCalories() %> kcal</span></td>
+                                    <td><span style="color: var(--primary); font-weight: 800; font-size: 1.05rem;"><%= entry.getTotalCalories() %> kcal</span></td>
                                     <td><%= entry.getTotalDistance() %> km</td>
                                     <td><%= entry.getTotalDuration() %> mins</td>
                                     <td><%= entry.getTotalWorkouts() %> sessions</td>

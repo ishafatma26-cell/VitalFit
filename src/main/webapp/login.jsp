@@ -16,17 +16,17 @@
 
     <nav class="navbar">
         <a href="index.jsp" class="nav-brand">
-            <div class="brand-icon">V</div>
+            <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
     </nav>
 
     <div class="main-container" style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
-        <div class="glass-panel" style="width: 100%; max-width: 440px; padding: 2.5rem;">
+        <div class="card-panel" style="width: 100%; max-width: 440px; padding: 2.5rem;">
 
             <div style="text-align: center; margin-bottom: 2rem;">
-                <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem;"><%= isRegister ? "Create Account" : "Welcome Back" %></h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem;"><%= isRegister ? "Join VitalFit to start tracking your journey" : "Enter your credentials to access your dashboard" %></p>
+                <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main);"><%= isRegister ? "Create Account" : "Welcome Back" %></h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;"><%= isRegister ? "Join VitalFit to start tracking your health journey" : "Enter your credentials to access your dashboard" %></p>
             </div>
 
             <% if ("logged_out".equals(msg)) { %>
@@ -37,9 +37,9 @@
                 <div class="alert alert-error"><%= request.getAttribute("errorMessage") %></div>
             <% } %>
 
-            <div style="display: flex; background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-md); padding: 0.25rem; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
-                <a href="login.jsp" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= !isRegister ? "#fff" : "var(--text-muted)" %>; background: <%= !isRegister ? "rgba(255, 255, 255, 0.1)" : "transparent" %>;">Sign In</a>
-                <a href="login.jsp?tab=register" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= isRegister ? "#fff" : "var(--text-muted)" %>; background: <%= isRegister ? "rgba(255, 255, 255, 0.1)" : "transparent" %>;">Register</a>
+            <div style="display: flex; background: #f1f5f9; border-radius: var(--radius-md); padding: 0.25rem; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
+                <a href="login.jsp" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= !isRegister ? "var(--primary)" : "var(--text-muted)" %>; background: <%= !isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= !isRegister ? "var(--shadow-card)" : "none" %>;">Sign In</a>
+                <a href="login.jsp?tab=register" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= isRegister ? "var(--primary)" : "var(--text-muted)" %>; background: <%= isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= isRegister ? "var(--shadow-card)" : "none" %>;">Register</a>
             </div>
 
             <% if (!isRegister) { %>
@@ -55,7 +55,7 @@
                     <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign In</button>
                 </form>
 
-                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-dim);">
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-muted);">
                     <strong>Demo Accounts:</strong><br>
                     • User: <code>user@vitalfit.demo</code> / <code>User@123</code><br>
                     • Admin: <code>admin@vitalfit.com</code> / <code>Admin@123</code>

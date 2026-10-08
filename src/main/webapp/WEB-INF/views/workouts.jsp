@@ -17,17 +17,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workouts & Goals CRUD - VitalFit</title>
+    <title>Workouts CRUD - VitalFit</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- Fixed Header Navigation Bar -->
+    <!-- Light Frosted Navigation Bar -->
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
+        <button class="mobile-nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
         <div class="nav-links">
             <a href="dashboard" class="nav-link">Dashboard</a>
             <a href="workouts" class="nav-link active">Workouts</a>
@@ -40,26 +41,26 @@
                 <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
-            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem;">Logout</a>
+            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
         </div>
     </nav>
 
     <div class="main-container">
         <div class="page-header">
             <div>
-                <h1 class="page-title">Workout CRUD Engine</h1>
-                <p class="page-subtitle">Log new exercise sessions, track intensity levels, and manage your activity history.</p>
+                <h1 class="page-title">Workout History & CRUD Engine</h1>
+                <p class="page-subtitle">Log new workout sessions, set target goals, and manage your activity history.</p>
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
 
-            <!-- Forms Column -->
+            <!-- Column 1: Forms -->
             <div style="display: flex; flex-direction: column; gap: 1.5rem;">
 
-                <!-- Top Card: Log a New Workout -->
-                <div class="glass-panel" style="padding: 1.5rem;">
-                    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: #fff;">Log a New Workout</h3>
+                <!-- Log Workout Form -->
+                <div class="card-panel" style="padding: 1.5rem;">
+                    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Log a New Workout</h3>
                     <form action="workouts" method="post">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                             <div class="form-group">
@@ -113,9 +114,9 @@
                     </form>
                 </div>
 
-                <!-- Bottom Form: Target Goal Creation -->
-                <div class="glass-panel" style="padding: 1.5rem;">
-                    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: #fff;">Set Target Goal</h3>
+                <!-- Set Target Goal Form -->
+                <div class="card-panel" style="padding: 1.5rem;">
+                    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Set Target Goal</h3>
                     <form action="workouts" method="post">
                         <input type="hidden" name="action" value="addGoal">
                         <div class="form-group">
@@ -136,17 +137,17 @@
                                 </select>
                             </div>
                         </div>
-                        <button type="submit" class="btn" style="width: 100%; background: rgba(255, 255, 255, 0.1); border: 1px solid var(--border-color); color: #fff;">Set New Goal</button>
+                        <button type="submit" class="btn" style="width: 100%; background: #ffffff; border: 1px solid var(--border-color); color: var(--text-main);">Set New Goal</button>
                     </form>
                 </div>
 
             </div>
 
-            <!-- Bottom Card: Workout History Table -->
-            <div class="glass-panel" style="padding: 1.5rem;">
-                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem;">Workout History</h3>
+            <!-- Column 2: Workout History Table -->
+            <div class="card-panel" style="padding: 1.5rem;">
+                <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Workout History Table</h3>
 
-                <div class="table-container">
+                <div class="table-responsive">
                     <table class="custom-table">
                         <thead>
                             <tr>
@@ -164,21 +165,21 @@
                                 for (Workout w : workouts) { %>
                                     <tr>
                                         <td>
-                                            <strong style="color: #fff;"><%= w.getActivityType() %></strong>
+                                            <strong style="color: var(--text-main);"><%= w.getActivityType() %></strong>
                                             <% if (w.getNotes() != null && !w.getNotes().isBlank()) { %>
-                                                <br><small style="color: var(--text-dim);"><%= w.getNotes() %></small>
+                                                <br><small style="color: var(--text-muted);"><%= w.getNotes() %></small>
                                             <% } %>
                                         </td>
                                         <td><span class="badge-intensity <%= w.getIntensity() %>"><%= w.getIntensity() %></span></td>
                                         <td><%= w.getWorkoutDate() %></td>
                                         <td><%= w.getDurationMinutes() %> mins</td>
-                                        <td><span style="color: var(--accent-cyan); font-weight: 800;"><%= w.getCaloriesBurned() %> kcal</span></td>
+                                        <td><span style="color: var(--primary); font-weight: 800;"><%= w.getCaloriesBurned() %> kcal</span></td>
                                         <td><%= w.getDistanceKm() %> km</td>
                                         <td>
                                             <form action="workouts" method="post" style="display: inline;" onsubmit="return confirm('Delete this workout record?');">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="id" value="<%= w.getId() %>">
-                                                <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">Delete</button>
+                                                <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">Delete</button>
                                             </form>
                                         </td>
                                     </tr>

@@ -74,21 +74,19 @@ public class LeaderboardService {
     /**
      * Java 8 Stream API processing:
      * - Retrieve workout history with user names
-     * - Filter valid records
-     * - Group by user ID using Collectors.groupingBy()
-     * - Aggregate metrics (calories, distance, duration, count)
+     * - Aggregate workout volume and total calories burned per user via groupingBy & summingInt
      * - Sort in descending order by total calories burned
      * - Assign rank badges (1, 2, 3 podium objects and subsequent ranks)
      */
     public List<LeaderboardEntry> getLeaderboard() throws SQLException {
         List<Workout> allWorkouts = workoutDAO.getAllWorkoutsWithUserNames();
 
-        // Group workouts by user ID using Stream API
+        // 1. Group workouts by user ID using Collectors.groupingBy
         Map<Integer, List<Workout>> userWorkoutsMap = allWorkouts.stream()
                 .filter(w -> w.getUserId() > 0)
                 .collect(Collectors.groupingBy(Workout::getUserId));
 
-        // Process each user's workouts to construct LeaderboardEntry objects
+        // 2. Map results using Stream API collectors
         List<LeaderboardEntry> unrankedEntries = userWorkoutsMap.entrySet().stream()
                 .map(entry -> {
                     int userId = entry.getKey();
@@ -100,17 +98,16 @@ public class LeaderboardService {
                             .findFirst()
                             .orElse("User #" + userId);
 
+                    // Aggregate total calories using summingInt
                     int totalCalories = workouts.stream()
-                            .mapToInt(Workout::getCaloriesBurned)
-                            .sum();
+                            .collect(Collectors.summingInt(Workout::getCaloriesBurned));
 
                     double totalDistance = workouts.stream()
                             .mapToDouble(Workout::getDistanceKm)
                             .sum();
 
                     int totalDuration = workouts.stream()
-                            .mapToInt(Workout::getDurationMinutes)
-                            .sum();
+                            .collect(Collectors.summingInt(Workout::getDurationMinutes));
 
                     long totalWorkouts = workouts.size();
 
@@ -121,7 +118,7 @@ public class LeaderboardService {
                 .sorted(Comparator.comparingInt(LeaderboardEntry::getTotalCalories).reversed())
                 .collect(Collectors.toList());
 
-        // Assign ranks 1, 2, 3...
+        // 3. Assign sequential ranks
         List<LeaderboardEntry> rankedList = new ArrayList<>();
         int currentRank = 1;
         for (LeaderboardEntry entry : unrankedEntries) {

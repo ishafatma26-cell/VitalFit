@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 @WebServlet("/challenges")
 public class ChallengeServlet extends HttpServlet {
@@ -38,7 +39,10 @@ public class ChallengeServlet extends HttpServlet {
 
         try {
             List<Challenge> challenges = challengeDAO.getAllChallenges(user.getId());
+            Set<Integer> enrolledChallengeIds = challengeDAO.getUserChallengeIds(user.getId());
+
             req.setAttribute("challenges", challenges);
+            req.setAttribute("enrolledChallengeIds", enrolledChallengeIds);
             req.getRequestDispatcher("/WEB-INF/views/challenges.jsp").forward(req, resp);
         } catch (SQLException e) {
             e.printStackTrace();
