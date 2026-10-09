@@ -81,6 +81,15 @@ public class ChallengeDAO {
         return null;
     }
 
+    public boolean deleteChallenge(int challengeId) throws SQLException {
+        String sql = "DELETE FROM challenges WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, challengeId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
     /**
      * ACID Transaction for Joining a Challenge.
      * Sets autoCommit(false), checks duplicate entry, inserts participant, records activity log,

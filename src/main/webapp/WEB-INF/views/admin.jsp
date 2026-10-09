@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.vitalfit.model.User" %>
 <%@ page import="com.vitalfit.model.ActivityLog" %>
+<%@ page import="com.vitalfit.model.Challenge" %>
 <%@ page import="java.util.List" %>
 <%
     User currentUser = (User) session.getAttribute("user");
@@ -10,6 +11,7 @@
     }
     List<User> userList = (List<User>) request.getAttribute("users");
     List<ActivityLog> logs = (List<ActivityLog>) request.getAttribute("logs");
+    List<Challenge> challenges = (List<Challenge>) request.getAttribute("challenges");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +49,7 @@
         <div class="page-header">
             <div>
                 <h1 class="page-title">Platform Administration & Security Panel</h1>
-                <p class="page-subtitle">User role management and live non-blocking multithreaded asynchronous activity logs.</p>
+                <p class="page-subtitle">User role management, challenge moderation, and live non-blocking multithreaded activity logs.</p>
             </div>
         </div>
 
@@ -98,12 +100,55 @@
             </div>
         </div>
 
-        <!-- Section 2: Live System Activity Logs (Multithreaded Showcase) -->
+        <!-- Section 2: Challenge Moderation -->
+        <div class="card-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Challenge Content Moderation</h3>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Challenge Title</th>
+                            <th>Target Type</th>
+                            <th>Target Goal</th>
+                            <th>Participants</th>
+                            <th>Duration</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (challenges != null && !challenges.isEmpty()) {
+                            for (Challenge ch : challenges) { %>
+                                <tr>
+                                    <td><strong style="color: var(--text-main);"><%= ch.getTitle() %></strong></td>
+                                    <td><span style="color: var(--badge-blue); font-weight: 700;"><%= ch.getTargetType() %></span></td>
+                                    <td><%= ch.getTargetGoal() %></td>
+                                    <td><%= ch.getParticipantCount() %> Enrolled</td>
+                                    <td><%= ch.getStartDate() %> to <%= ch.getEndDate() %></td>
+                                    <td>
+                                        <form action="admin" method="post" onsubmit="return confirm('Delete this challenge?');">
+                                            <input type="hidden" name="action" value="deleteChallenge">
+                                            <input type="hidden" name="challengeId" value="<%= ch.getId() %>">
+                                            <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                        <%  }
+                           } else { %>
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No active challenges found.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 3: Live System Activity Logs (Multithreaded Showcase) -->
         <div class="card-panel" style="padding: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
                 <div>
                     <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Live System Activity Logs (Multithreaded)</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Asymptotically logged via managed ExecutorService fixed thread pool (Executors.newFixedThreadPool(3)).</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Logged via managed ExecutorService fixed thread pool (Executors.newFixedThreadPool(3)).</p>
                 </div>
                 <span style="font-size: 0.8rem; background: var(--badge-blue-light); border: 1px solid rgba(37, 99, 235, 0.3); color: var(--badge-blue); padding: 0.3rem 0.75rem; border-radius: 20px; font-weight: 700;">
                     Pool Size: 3 Worker Threads
