@@ -17,7 +17,12 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@WebServlet("/dashboard")
+/**
+ * Controller for user dashboard metrics, charts, and streaks.
+ *
+ * @author Mukesh kumar (25SCSE1330101) - Team NOVA
+ */
+@WebServlet(urlPatterns = {"/dashboard", "/user/dashboard"})
 public class DashboardServlet extends HttpServlet {
 
     private WorkoutDAO workoutDAO;
@@ -41,7 +46,6 @@ public class DashboardServlet extends HttpServlet {
             List<Workout> workouts = workoutDAO.getWorkoutsByUserId(user.getId());
             List<Goal> goals = workoutDAO.getGoalsByUserId(user.getId());
 
-            // Compute summary metrics using Java Stream API
             int totalCalories = workouts.stream().mapToInt(Workout::getCaloriesBurned).sum();
             double totalDistance = workouts.stream().mapToDouble(Workout::getDistanceKm).sum();
             int totalWorkouts = workouts.size();
@@ -49,7 +53,6 @@ public class DashboardServlet extends HttpServlet {
 
             int currentStreak = computeStreakDays(workouts);
 
-            // Recent activity (latest 5 workouts)
             List<Workout> recentWorkouts = workouts.stream().limit(5).collect(Collectors.toList());
 
             req.setAttribute("totalCalories", totalCalories);
@@ -58,6 +61,7 @@ public class DashboardServlet extends HttpServlet {
             req.setAttribute("activeGoalsCount", activeGoalsCount);
             req.setAttribute("currentStreak", currentStreak);
             req.setAttribute("recentWorkouts", recentWorkouts);
+            req.setAttribute("allWorkouts", workouts);
             req.setAttribute("goals", goals);
 
             req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(req, resp);

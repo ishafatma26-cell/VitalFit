@@ -47,11 +47,15 @@
     </nav>
 
     <div class="main-container">
-        <div class="page-header">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
             <div>
                 <h1 class="page-title">Workout History & Management</h1>
                 <p class="page-subtitle">Log new sessions, define health goals, and manage your activity history.</p>
             </div>
+            <!-- Innovation 2: CSV Export -->
+            <a href="workouts?action=exportCsv" class="btn" style="background: rgba(16,185,129,0.15); color: var(--primary-emerald-hover); border: 1px solid rgba(16,185,129,0.3);">
+                📥 Download CSV Report
+            </a>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
@@ -63,6 +67,7 @@
                 <div class="card-panel" style="padding: 1.5rem;">
                     <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Log a New Workout</h3>
                     <form action="workouts" method="post">
+                        <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                             <div class="form-group">
                                 <label class="form-label">Workout Date</label>
@@ -98,8 +103,8 @@
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                             <div class="form-group">
-                                <label class="form-label">Calories Burned</label>
-                                <input type="number" name="calories" class="form-control" min="0" required placeholder="350">
+                                <label class="form-label">Calories (0 = Auto-Strategy)</label>
+                                <input type="number" name="calories" class="form-control" min="0" placeholder="Auto-calculated if 0" value="0">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Distance (km)</label>
@@ -119,6 +124,7 @@
                 <div class="card-panel" style="padding: 1.5rem;">
                     <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Set Target Goal</h3>
                     <form action="workouts" method="post">
+                        <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                         <input type="hidden" name="action" value="addGoal">
                         <div class="form-group">
                             <label class="form-label">Goal Title</label>
@@ -177,11 +183,20 @@
                                         <td><span style="color: var(--primary-emerald-hover); font-weight: 800;"><%= w.getCaloriesBurned() %> kcal</span></td>
                                         <td><%= w.getDistanceKm() %> km</td>
                                         <td>
-                                            <form action="workouts" method="post" style="display: inline;" onsubmit="return confirm('Delete this workout record?');">
-                                                <input type="hidden" name="action" value="delete">
-                                                <input type="hidden" name="id" value="<%= w.getId() %>">
-                                                <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">Delete</button>
-                                            </form>
+                                            <div style="display: flex; gap: 0.25rem;">
+                                                <!-- Edit Modal Trigger -->
+                                                <button type="button" class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: #e0f2fe; color: #0369a1;"
+                                                        onclick="openEditModal(<%= w.getId() %>, '<%= w.getActivityType() %>', '<%= w.getIntensity() %>', <%= w.getDurationMinutes() %>, <%= w.getCaloriesBurned() %>, <%= w.getDistanceKm() %>, '<%= w.getWorkoutDate() %>', '<%= w.getNotes() != null ? w.getNotes().replace("'", "\\'") : "" %>')">
+                                                    Edit
+                                                </button>
+                                                <!-- Delete Action -->
+                                                <form action="workouts" method="post" style="display: inline;" onsubmit="return confirm('Delete this workout record?');">
+                                                    <input type="hidden" name="csrfToken" value="${csrfToken}"/>
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <input type="hidden" name="id" value="<%= w.getId() %>">
+                                                    <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">Delete</button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                             <%  }
@@ -198,6 +213,89 @@
 
         </div>
     </div>
+
+    <!-- Edit Workout Modal -->
+    <div id="editWorkoutModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center; padding: 1rem;">
+        <div class="card-panel" style="max-width: 480px; width: 100%; padding: 2rem; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin: 0;">Edit Workout Record</h3>
+                <button type="button" onclick="closeEditModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+            </div>
+            <form action="workouts" method="post">
+                <input type="hidden" name="csrfToken" value="${csrfToken}"/>
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" id="editId" name="id" value="">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div>
+                        <label class="form-label">Workout Date</label>
+                        <input type="date" id="editDate" name="workoutDate" class="form-control" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Workout Type</label>
+                        <select id="editActivityType" name="activityType" class="form-control" required>
+                            <option value="Running">Running</option>
+                            <option value="Cycling">Cycling</option>
+                            <option value="Strength">Strength</option>
+                            <option value="HIIT">HIIT</option>
+                            <option value="Yoga">Yoga</option>
+                            <option value="Swimming">Swimming</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div>
+                        <label class="form-label">Intensity</label>
+                        <select id="editIntensity" name="intensity" class="form-control" required>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Duration (mins)</label>
+                        <input type="number" id="editDuration" name="duration" class="form-control" required min="1">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div>
+                        <label class="form-label">Calories Burned</label>
+                        <input type="number" id="editCalories" name="calories" class="form-control" required min="0">
+                    </div>
+                    <div>
+                        <label class="form-label">Distance (km)</label>
+                        <input type="number" step="0.01" id="editDistance" name="distance" class="form-control">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label class="form-label">Notes</label>
+                    <input type="text" id="editNotes" name="notes" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-emerald" style="width: 100%;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openEditModal(id, type, intensity, duration, calories, distance, date, notes) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editActivityType').value = type;
+            document.getElementById('editIntensity').value = intensity;
+            document.getElementById('editDuration').value = duration;
+            document.getElementById('editCalories').value = calories;
+            document.getElementById('editDistance').value = distance;
+            document.getElementById('editDate').value = date;
+            document.getElementById('editNotes').value = notes || '';
+            document.getElementById('editWorkoutModal').style.display = 'flex';
+        }
+        function closeEditModal() {
+            document.getElementById('editWorkoutModal').style.display = 'none';
+        }
+    </script>
 
 </body>
 </html>

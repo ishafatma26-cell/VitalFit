@@ -111,9 +111,11 @@ public class VitalFitPlatformTest {
 
     @Test
     public void testMultithreadedAsyncActivityLogging() throws Exception {
-        ActivityLogService.logAsync("async@vitalfit.demo", "TEST_ASYNC", "Testing multithreaded logging executor");
+        // Use CompletableFuture.get to wait for async completion without artificial Thread.sleep
+        java.util.concurrent.CompletableFuture<Void> future =
+                ActivityLogService.logAsync("async@vitalfit.demo", "TEST_ASYNC", "Testing multithreaded logging executor");
 
-        Thread.sleep(800);
+        future.get(5, java.util.concurrent.TimeUnit.SECONDS);
 
         List<ActivityLog> logs = ActivityLogService.getRecentLogs(20);
         boolean found = logs.stream().anyMatch(l -> "async@vitalfit.demo".equals(l.getUserEmail()) && "TEST_ASYNC".equals(l.getAction()));

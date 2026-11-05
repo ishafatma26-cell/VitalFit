@@ -6,15 +6,30 @@ import com.vitalfit.model.ActivityLog;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
+/**
+ * Dedicated Java Concurrency Service for non-blocking asynchronous activity/workout audit logging.
+ * Managed thread pool executor with thread factory, lifecycle management, and CompletableFuture support.
+ *
+ * @author Isha Fatma (25SCSE1180892) - Team NOVA
+ */
 public class ActivityLogService {
 
-    private static final ExecutorService executor = Executors.newFixedThreadPool(3);
+    private static final ThreadFactory THREAD_FACTORY = new ThreadFactory() {
+        private int count = 1;
+        @Override
+        public synchronized Thread newThread(Runnable r) {
+            Thread t = new Thread(r, "VitalFit-AsyncLogger-" + (count++));
+            t.setDaemon(true);
+            return t;
+        }
+    };
 
-    public static void logAsync(String userEmail, String action, String details) {
-        executor.submit(() -> {
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(4, THREAD_FACTORY);
+
+    public static CompletableFuture<Void> logAsync(String userEmail, String action, String details) {
+        return CompletableFuture.runAsync(() -> {
             String workerThreadName = Thread.currentThread().getName();
             String sql = "INSERT INTO activity_log (user_email, action, details, thread_name) VALUES (?, ?, ?, ?)";
             try (Connection conn = DBConnection.getConnection();
@@ -27,7 +42,7 @@ public class ActivityLogService {
             } catch (SQLException e) {
                 System.err.println("Failed to write async activity log: " + e.getMessage());
             }
-        });
+        }, EXECUTOR);
     }
 
     public static List<ActivityLog> getRecentLogs(int limit) {
@@ -54,9 +69,13 @@ public class ActivityLogService {
         return logs;
     }
 
+    public static ExecutorService getExecutor() {
+        return EXECUTOR;
+    }
+
     public static void shutdown() {
-        if (!executor.isShutdown()) {
-            executor.shutdown();
+        if (!EXECUTOR.isShutdown()) {
+            EXECUTOR.shutdown();
         }
     }
 }

@@ -6,6 +6,7 @@ import com.vitalfit.model.ActivityLog;
 import com.vitalfit.model.Challenge;
 import com.vitalfit.model.User;
 import com.vitalfit.service.ActivityLogService;
+import com.vitalfit.util.XssSanitizer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,7 +18,12 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
-@WebServlet("/admin")
+/**
+ * Administrator panel servlet for user management, challenge moderation, and activity monitoring.
+ *
+ * @author Mukesh kumar (25SCSE1330101) - Team NOVA
+ */
+@WebServlet(urlPatterns = {"/admin", "/admin/dashboard"})
 public class AdminServlet extends HttpServlet {
 
     private UserDAO userDAO;
@@ -69,13 +75,13 @@ public class AdminServlet extends HttpServlet {
         try {
             if ("updateRole".equalsIgnoreCase(action)) {
                 int targetUserId = Integer.parseInt(req.getParameter("userId"));
-                String newRole = req.getParameter("role");
+                String newRole = XssSanitizer.sanitize(req.getParameter("role"));
                 userDAO.updateUserRole(targetUserId, newRole);
                 ActivityLogService.logAsync(user.getEmail(), "ADMIN_ROLE_UPDATE", "Changed user ID " + targetUserId + " role to " + newRole);
             } else if ("createChallenge".equalsIgnoreCase(action)) {
-                String title = req.getParameter("title");
-                String description = req.getParameter("description");
-                String targetType = req.getParameter("targetType");
+                String title = XssSanitizer.sanitize(req.getParameter("title"));
+                String description = XssSanitizer.sanitize(req.getParameter("description"));
+                String targetType = XssSanitizer.sanitize(req.getParameter("targetType"));
                 double targetGoal = Double.parseDouble(req.getParameter("targetGoal"));
                 Date startDate = Date.valueOf(req.getParameter("startDate"));
                 Date endDate = Date.valueOf(req.getParameter("endDate"));

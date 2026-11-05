@@ -4,8 +4,10 @@ import com.vitalfit.dao.ChallengeDAO;
 import com.vitalfit.dao.UserDAO;
 import com.vitalfit.dao.WorkoutDAO;
 import com.vitalfit.model.User;
+import com.vitalfit.model.UserPrincipal;
 import com.vitalfit.model.Workout;
 import com.vitalfit.service.ActivityLogService;
+import com.vitalfit.util.XssSanitizer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,7 +23,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-@WebServlet("/profile")
+/**
+ * Servlet handling user profile details, updates, and telemetry stats.
+ *
+ * @author Mukesh kumar (25SCSE1330101) - Team NOVA
+ */
+@WebServlet(urlPatterns = {"/profile", "/user/profile"})
 public class ProfileServlet extends HttpServlet {
 
     private UserDAO userDAO;
@@ -46,10 +53,10 @@ public class ProfileServlet extends HttpServlet {
         }
 
         try {
-            // Refresh user details
             User refreshedUser = userDAO.findById(user.getId());
             if (refreshedUser != null) {
                 session.setAttribute("user", refreshedUser);
+                session.setAttribute("userPrincipal", UserPrincipal.fromUser(refreshedUser));
                 user = refreshedUser;
             }
 
@@ -89,7 +96,8 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
-        String newName = req.getParameter("name");
+        String rawName = req.getParameter("name");
+        String newName = XssSanitizer.sanitize(rawName);
 
         if (newName != null && !newName.isBlank()) {
             try {
@@ -97,6 +105,7 @@ public class ProfileServlet extends HttpServlet {
                 if (updated) {
                     user.setName(newName.trim());
                     session.setAttribute("user", user);
+                    session.setAttribute("userPrincipal", UserPrincipal.fromUser(user));
                     ActivityLogService.logAsync(user.getEmail(), "UPDATE_PROFILE", "Updated name to: " + newName.trim());
                     req.setAttribute("flashMessage", "Profile name updated successfully!");
                 }

@@ -1,41 +1,115 @@
 package com.vitalfit.dao;
 
 import com.vitalfit.config.DBConnection;
+import com.vitalfit.config.TransactionManager;
 import com.vitalfit.model.Goal;
 import com.vitalfit.model.Workout;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class WorkoutDAO {
+/**
+ * Data Access Object for Workout entities with transactional goal updates.
+ *
+ * @author ADITYA KUMAR SINGH (25SCSE1180275) - Team NOVA
+ */
+public class WorkoutDAO implements GenericDao<Workout, Integer> {
 
-    public boolean addWorkout(Workout workout) throws SQLException {
-        String sql = "INSERT INTO workouts (user_id, activity_type, intensity, duration_minutes, calories_burned, distance_km, workout_date, notes) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    @Override
+    public Optional<Workout> findById(Integer id) throws SQLException {
+        if (id == null) return Optional.empty();
+        String sql = "SELECT id, user_id, activity_type, intensity, duration_minutes, calories_burned, distance_km, workout_date, notes, created_at " +
+                     "FROM workouts WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, workout.getUserId());
-            stmt.setString(2, workout.getActivityType());
-            stmt.setString(3, workout.getIntensity() != null ? workout.getIntensity() : "Medium");
-            stmt.setInt(4, workout.getDurationMinutes());
-            stmt.setInt(5, workout.getCaloriesBurned());
-            stmt.setDouble(6, workout.getDistanceKm());
-            stmt.setDate(7, workout.getWorkoutDate() != null ? workout.getWorkoutDate() : new Date(System.currentTimeMillis()));
-            stmt.setString(8, workout.getNotes());
-
-            int affected = stmt.executeUpdate();
-            if (affected > 0) {
-                try (ResultSet rs = stmt.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        workout.setId(rs.getInt(1));
-                    }
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Workout w = new Workout(
+                            rs.getInt("id"),
+                            rs.getInt("user_id"),
+                            rs.getString("activity_type"),
+                            rs.getString("intensity"),
+                            rs.getInt("duration_minutes"),
+                            rs.getInt("calories_burned"),
+                            rs.getDouble("distance_km"),
+                            rs.getDate("workout_date"),
+                            rs.getString("notes")
+                    );
+                    w.setCreatedAt(rs.getTimestamp("created_at"));
+                    return Optional.of(w);
                 }
-                updateUserGoals(conn, workout.getUserId());
-                return true;
             }
         }
-        return false;
+        return Optional.empty();
+    }
+
+    @Override
+    public List<Workout> findAll() throws SQLException {
+        return getAllWorkoutsWithUserNames();
+    }
+
+    @Override
+    public boolean save(Workout entity) throws SQLException {
+        return addWorkout(entity);
+    }
+
+    @Override
+    public boolean update(Workout entity) throws SQLException {
+        if (entity == null || entity.getId() <= 0) return false;
+        String sql = "UPDATE workouts SET activity_type = ?, intensity = ?, duration_minutes = ?, calories_burned = ?, " +
+                     "distance_km = ?, workout_date = ?, notes = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, entity.getActivityType());
+            stmt.setString(2, entity.getIntensity() != null ? entity.getIntensity() : "Medium");
+            stmt.setInt(3, entity.getDurationMinutes());
+            stmt.setInt(4, entity.getCaloriesBurned());
+            stmt.setDouble(5, entity.getDistanceKm());
+            stmt.setDate(6, entity.getWorkoutDate() != null ? entity.getWorkoutDate() : new Date(System.currentTimeMillis()));
+            stmt.setString(7, entity.getNotes());
+            stmt.setInt(8, entity.getId());
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    @Override
+    public boolean deleteById(Integer id) throws SQLException {
+        if (id == null) return false;
+        Optional<Workout> w = findById(id);
+        if (w.isEmpty()) return false;
+        return deleteWorkout(id, w.get().getUserId());
+    }
+
+    public boolean addWorkout(Workout workout) throws SQLException {
+        return TransactionManager.executeInTransaction(conn -> {
+            String sql = "INSERT INTO workouts (user_id, activity_type, intensity, duration_minutes, calories_burned, distance_km, workout_date, notes) " +
+                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                stmt.setInt(1, workout.getUserId());
+                stmt.setString(2, workout.getActivityType());
+                stmt.setString(3, workout.getIntensity() != null ? workout.getIntensity() : "Medium");
+                stmt.setInt(4, workout.getDurationMinutes());
+                stmt.setInt(5, workout.getCaloriesBurned());
+                stmt.setDouble(6, workout.getDistanceKm());
+                stmt.setDate(7, workout.getWorkoutDate() != null ? workout.getWorkoutDate() : new Date(System.currentTimeMillis()));
+                stmt.setString(8, workout.getNotes());
+
+                int affected = stmt.executeUpdate();
+                if (affected > 0) {
+                    try (ResultSet rs = stmt.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            workout.setId(rs.getInt(1));
+                        }
+                    }
+                    updateUserGoals(conn, workout.getUserId());
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     public List<Workout> getWorkoutsByUserId(int userId) throws SQLException {
@@ -95,18 +169,19 @@ public class WorkoutDAO {
     }
 
     public boolean deleteWorkout(int workoutId, int userId) throws SQLException {
-        String sql = "DELETE FROM workouts WHERE id = ? AND user_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, workoutId);
-            stmt.setInt(2, userId);
-            int affected = stmt.executeUpdate();
-            if (affected > 0) {
-                updateUserGoals(conn, userId);
-                return true;
+        return TransactionManager.executeInTransaction(conn -> {
+            String sql = "DELETE FROM workouts WHERE id = ? AND user_id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, workoutId);
+                stmt.setInt(2, userId);
+                int affected = stmt.executeUpdate();
+                if (affected > 0) {
+                    updateUserGoals(conn, userId);
+                    return true;
+                }
             }
-        }
-        return false;
+            return false;
+        });
     }
 
     public List<Goal> getGoalsByUserId(int userId) throws SQLException {
@@ -158,7 +233,6 @@ public class WorkoutDAO {
     }
 
     private void updateUserGoals(Connection conn, int userId) throws SQLException {
-        // Calculate total calories, distance, and workout count
         String calcSql = "SELECT COALESCE(SUM(calories_burned), 0) as total_cals, " +
                          "COALESCE(SUM(distance_km), 0) as total_dist, " +
                          "COUNT(*) as total_count FROM workouts WHERE user_id = ?";
@@ -177,7 +251,6 @@ public class WorkoutDAO {
             }
         }
 
-        // 1. Update current_value based on unit
         String updateValSql = "UPDATE goals SET current_value = CASE " +
                               "WHEN LOWER(unit) LIKE '%kcal%' OR LOWER(unit) LIKE '%cal%' THEN ? " +
                               "WHEN LOWER(unit) LIKE '%km%' OR LOWER(unit) LIKE '%dist%' THEN ? " +
@@ -190,7 +263,6 @@ public class WorkoutDAO {
             stmt.executeUpdate();
         }
 
-        // 2. Update status based on the newly updated current_value
         String updateStatusSql = "UPDATE goals SET status = CASE WHEN current_value >= target_value THEN 'COMPLETED' ELSE 'IN_PROGRESS' END WHERE user_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(updateStatusSql)) {
             stmt.setInt(1, userId);

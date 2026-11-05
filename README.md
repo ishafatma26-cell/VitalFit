@@ -1,68 +1,73 @@
-# VitalFit – Intelligent Health & Fitness Tracking Web Application
+# VitalFit – Intelligent Online Fitness Tracking Platform
 
-VitalFit is a modern, responsive, full-stack Java web application built with Jakarta EE (Servlets + JSP + JSTL), plain JDBC, and PostgreSQL. Users can log workouts, monitor vital health metrics, track calorie balance, join community challenges, and view dynamic leaderboards. Administrators have dedicated tools to manage users, evaluate fitness metrics, moderate platform content, and review real-time multithreaded system activity logs.
-
----
-
-## 🚀 Live Application & Demo
-
-* **Live URL:** `https://vitalfit.onrender.com`
-* **Demo User:** `user@vitalfit.demo` | **Password:** `User@123`
-* **Demo Admin:** `admin@vitalfit.com` | **Password:** `Admin@123`
+**Target Repository:** Online Fitness Tracking Application (VitalFit)
+**Team Name:** Team NOVA
+**Production URL:** `https://vitalfit-s9su.onrender.com`
+**Demo User:** `user@vitalfit.demo` | **Password:** `User@123`
+**Demo Admin:** `admin@vitalfit.com` | **Password:** `Admin@123`
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## 👥 Team NOVA – Core Contributors & Academic Attribution
 
-* **Architecture:** Model-View-Controller (MVC) Pattern
-* **Language & Runtime:** Java 17, Apache Tomcat 10.1 (Docker multi-stage build)
-* **Web Technologies:** Jakarta Servlet 6.0, JSP 3.1, JSTL 3.0 (`jakarta.tags.core`)
-* **Database:** PostgreSQL (Neon Cloud Database) with Connection Lifecycle Optimization
-* **Data Access:** Plain JDBC with `PreparedStatement` (DAO Pattern)
-* **Security:** BCrypt salted password hashing, Role-Based Session Filters
-* **UI/UX:** Dark Glassmorphism, Responsive Mobile-First CSS Grid/Flexbox
-* **Build Tool:** Apache Maven
-* **Deployment & Containerization:** Docker Multi-Stage Build
+* **Isha Fatma (Admission No: 25SCSE1180892)**
+  * *Role & Ownership:* System Architecture, Service Layer Engineering, Session Security (`UserPrincipal`), Role-Based Filters (`AuthFilter`), and Cryptographic CSRF Defense (`CsrfFilter`).
+* **ADITYA KUMAR SINGH (Admission No: 25SCSE1180275)**
+  * *Role & Ownership:* Database Architecture, HikariCP Connection Pool Integration, ACID `TransactionManager` Helper, and Generic Data Access Object Layer (`GenericDao<T, ID>`).
+* **Mukesh kumar (Admission No: 25SCSE1330101)**
+  * *Role & Ownership:* Servlet Controller Implementations, Strategy Pattern for Calorie Estimation (`WorkoutCalculator`), Chart.js Visual Analytics, BMR/TDEE & CSV Innovations, and Automated JUnit 5 / Mockito Test Suite.
 
 ---
 
-## 📋 Academic Rubric Alignment (Review 1)
+## 🛠️ Architecture & Core Design Patterns
 
-### 1. Core Java Concepts & OOP (10 Marks)
-* **Encapsulation:** JavaBean domain models (`User`, `VitalMetric`, `Workout`, `Challenge`, `FitnessContent`) with strictly private fields and validated getters/setters.
-* **Abstraction & Interfaces:** Clean Data Access Object (DAO) architecture (`VitalMetricDao`, `WorkoutDao`, `ChallengeDao`, `ActivityLogDao`, `UserDao`) decoupled from SQL implementations.
-* **Polymorphism:** Dynamic method dispatch via interface bindings across Servlet controller layers.
-* **Inheritance:** Hierarchical service and domain structure ensuring code reusability and modularity.
-
-### 2. Advanced Collections & Multithreading (10 Marks)
-* **Collections Framework:** In-memory leaderboard sorting and ranking using `ArrayList`, `HashMap`, and `TreeSet`.
-* **Multithreading:** Asynchronous background worker threads for non-blocking user activity logging and metric computation.
-
-### 3. Database Connectivity & Reliability (10 Marks)
-* **Relational Schema:** Normalized 3NF PostgreSQL schema with foreign keys, cascade rules, and optimized index constraints.
-* **SQL Injection Prevention:** 100% parameter-binding utilizing `PreparedStatement`.
-* **Cloud Database:** High-availability serverless PostgreSQL database hosted on Neon Cloud.
-
-### 4. Web Tier, MVC Design & Enterprise Security (10 Marks)
-* **Controller Layer:** Specialized Jakarta Servlets handling application routing and request lifecycles.
-* **View Layer:** Modular JSP components utilizing standard JSTL core tags without legacy scriptlets.
-* **Session Management:** Secure HTTP session validation with role-based authentication filters.
+* **Model-View-Controller (MVC):** Decoupled Jakarta EE Servlets (6.0), JSTL 3.0 JSPs, and robust domain models.
+* **Strategy Design Pattern:** Calorie burn estimation abstracted behind `WorkoutCalculator` with dynamic resolution via `WorkoutCalculatorFactory` across `CardioWorkoutCalculator`, `StrengthWorkoutCalculator`, `YogaWorkoutCalculator`, and `HIITWorkoutCalculator`.
+* **Generic DAO Pattern:** `GenericDao<T, ID>` contract implemented across `UserDAO`, `WorkoutDAO`, and `ChallengeDAO` with `Optional<T>` return semantics.
+* **ACID Transaction Management:** `TransactionManager` executing multi-step mutations with atomic `connection.setAutoCommit(false)`, `commit()`, and rollback on `SQLException`.
+* **High-Performance Connection Pooling:** HikariCP 5.1.0 connection pool with leak detection and resource cleanup.
+* **Enterprise Web Security:**
+  * Role-Based Access Control via `AuthFilter` guarding `/dashboard`, `/workouts`, `/challenges`, `/leaderboard`, `/profile`, `/user/*`, and `/admin/*`.
+  * Cross-Site Request Forgery (CSRF) protection filter enforcing per-session cryptographic random tokens on state-modifying requests (`POST`, `PUT`, `DELETE`).
+  * Cross-Site Scripting (XSS) entity escaping via `XssSanitizer`.
+  * Salted password hashing via BCrypt.
 
 ---
 
-## 📁 Repository Structure
+## 📊 Topic 8 Syllabus & Innovation Features
 
-```text
-VitalFit/
-├── src/main/java/com/vitalfit/
-│   ├── controller/      # Jakarta Servlets (Auth, Vitals, Workout, Admin)
-│   ├── dao/             # Data Access Object Interfaces & Implementations
-│   ├── model/           # JavaBean Entities (User, Workout, Vitals)
-│   └── util/            # DB Connection, BCrypt Encryption, Session Filters
-├── src/main/webapp/
-│   ├── WEB-INF/         # web.xml & secure JSP view components
-│   ├── css/             # Glassmorphic responsive UI styles
-│   └── js/              # Dynamic client-side validations
-├── Dockerfile           # Multi-stage production container build
-├── pom.xml              # Maven dependencies & build configuration
-└── schema.sql           # Database schema & demo seed data
+1. **User Dashboard (`/dashboard`, `/user/dashboard`):**
+   * **Workout Log Management:** Tabular history with modal edit and delete operations.
+   * **Visual Analytics (Chart.js):** Interactive 7-day calorie burn trend line chart and workout type distribution doughnut chart.
+   * **Target Goals & Streaks:** Real-time progress bars and streak tracker computed via Java Stream API.
+   * **Innovation 1 – Smart BMR & TDEE Calculator Modal:** Computes Basal Metabolic Rate (Mifflin-St Jeor), daily maintenance calories, and hydration targets.
+   * **Innovation 2 – Workout CSV Data Export:** One-click download of all workout telemetry to a standard `.csv` file.
+2. **Admin Dashboard (`/admin`, `/admin/dashboard`):**
+   * **Athlete Role Toggle:** Instant role elevation and demotion between User and Admin.
+   * **Challenge Moderation:** Management of community challenges.
+   * **Multithreaded System Audit Log:** Live activity log executed asynchronously via a dedicated fixed worker thread pool (`Executors.newFixedThreadPool(4)`).
+   * **Platform Settings Configuration:** System-wide baseline targets for steps and hydration.
+
+---
+
+## 🧪 Testing & Verification
+
+The test suite leverages JUnit 5 (`junit-jupiter-api`, `junit-jupiter-params`, `junit-jupiter-engine`), Mockito (`mockito-core`, `mockito-junit-jupiter`), and an embedded H2 in-memory PostgreSQL mode database.
+
+To run the complete automated test suite:
+```bash
+mvn clean test
+```
+
+To build the production deployment WAR artifact:
+```bash
+mvn clean package
+```
+
+### Test Suite Summary:
+* `CalorieCalculatorStrategyTest`: Validates calculations for all 4 workout strategies, MET scaling, EPOC multipliers, boundaries (zero/negative durations), and factory dynamic dispatch.
+* `TransactionManagerTest`: Asserts atomic commit behavior and rollback safety upon SQL failures.
+* `UserAuthServiceTest`: Verifies BCrypt password hashing, authentication success/rejection, and `UserPrincipal` creation.
+* `CsrfFilterTest`: Mocks Servlet requests to ensure GET passthrough, 403 Forbidden rejection for missing/tampered tokens, and proper token matching.
+* `WorkoutDaoTest` & `ChallengeDaoTest`: Verifies full `GenericDao` CRUD contracts against the database.
+* `VitalFitPlatformTest`: End-to-end integration tests without artificial thread sleep delays.
