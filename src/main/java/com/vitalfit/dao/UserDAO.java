@@ -209,4 +209,42 @@ public class UserDAO implements GenericDao<User, Integer> {
             return stmt.executeUpdate() > 0;
         }
     }
+
+    /**
+     * Checks if a user exists with the given email (case-insensitive).
+     *
+     * @param email user email address
+     * @return true if user exists, false otherwise
+     */
+    public boolean existsByEmail(String email) throws SQLException {
+        if (email == null || email.trim().isEmpty()) return false;
+        String sql = "SELECT 1 FROM users WHERE LOWER(email) = LOWER(?)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email.trim());
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    /**
+     * Updates user's hashed password by email (case-insensitive).
+     *
+     * @param email user email address
+     * @param newHashedPassword the BCrypt hashed password
+     * @return true if password was successfully updated, false otherwise
+     */
+    public boolean updatePasswordByEmail(String email, String newHashedPassword) throws SQLException {
+        if (email == null || email.trim().isEmpty() || newHashedPassword == null || newHashedPassword.trim().isEmpty()) {
+            return false;
+        }
+        String sql = "UPDATE users SET password_hash = ? WHERE LOWER(email) = LOWER(?)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, newHashedPassword);
+            stmt.setString(2, email.trim());
+            return stmt.executeUpdate() > 0;
+        }
+    }
 }

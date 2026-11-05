@@ -32,6 +32,10 @@
 
             <% if ("logged_out".equals(msg)) { %>
                 <div class="alert alert-info">You have been signed out successfully.</div>
+            <% } else if ("password_reset_success".equals(msg)) { %>
+                <div class="alert alert-info" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #047857;">
+                    Your password has been successfully reset. Please log in with your new password.
+                </div>
             <% } %>
 
             <% if ("session_expired".equals(err)) { %>
@@ -60,7 +64,15 @@
                         <label class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="btn btn-emerald" style="width: 100%; margin-top: 1rem;">Sign In</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); cursor: pointer;">
+                            <input type="checkbox" id="rememberMe" name="rememberMe"> Remember me
+                        </label>
+                        <a href="${pageContext.request.contextPath}/forgot-password" style="font-size: 0.85rem; color: var(--primary-emerald); text-decoration: none; font-weight: 500;">
+                            Forgot password?
+                        </a>
+                    </div>
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; margin-top: 0.5rem;">Sign In</button>
                 </form>
             <% } else { %>
                 <form action="${pageContext.request.contextPath}/register" method="post">
