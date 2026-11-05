@@ -1,3 +1,7 @@
+/**
+ * Transaction rollback safety and connection pool verification
+ * Contributor: ADITYA KUMAR SINGH (Add No: 25SCSE1180275)
+ */
 package com.vitalfit.dao;
 
 import com.vitalfit.config.DBConnection;
