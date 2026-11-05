@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String msg = request.getParameter("msg");
+    String err = request.getParameter("error");
     String tab = request.getParameter("tab");
     boolean isRegister = "register".equalsIgnoreCase(tab);
 %>
@@ -33,6 +34,12 @@
                 <div class="alert alert-info">You have been signed out successfully.</div>
             <% } %>
 
+            <% if ("session_expired".equals(err)) { %>
+                <div class="alert alert-error">Session expired or invalid token. Please try logging in again.</div>
+            <% } else if ("invalid_credentials".equals(err)) { %>
+                <div class="alert alert-error">Invalid email or password. Please try again.</div>
+            <% } %>
+
             <% if (request.getAttribute("errorMessage") != null) { %>
                 <div class="alert alert-error"><%= request.getAttribute("errorMessage") %></div>
             <% } %>
@@ -44,6 +51,7 @@
 
             <% if (!isRegister) { %>
                 <form action="login" method="post">
+                    <input type="hidden" name="csrfToken" value="${csrfToken != null ? csrfToken : sessionScope.csrfToken}" />
                     <div class="form-group">
                         <label class="form-label">Email Address</label>
                         <input type="email" name="email" class="form-control" placeholder="user@vitalfit.demo" required>
@@ -56,6 +64,7 @@
                 </form>
             <% } else { %>
                 <form action="register" method="post">
+                    <input type="hidden" name="csrfToken" value="${csrfToken != null ? csrfToken : sessionScope.csrfToken}" />
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
                         <input type="text" name="name" class="form-control" placeholder="John Doe" required>

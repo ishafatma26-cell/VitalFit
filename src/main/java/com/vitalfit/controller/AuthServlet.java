@@ -1,6 +1,7 @@
 package com.vitalfit.controller;
 
 import com.vitalfit.dao.UserDAO;
+import com.vitalfit.filter.CsrfFilter;
 import com.vitalfit.model.User;
 import com.vitalfit.model.UserPrincipal;
 import com.vitalfit.service.ActivityLogService;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 
 /**
  * Authentication Servlet for user sign-in, registration, and logout.
+ * Implements session fixation defense and CSRF token rotation on authentication.
  *
  * @author Isha Fatma (25SCSE1180892) - Team NOVA
  */
@@ -74,19 +76,30 @@ public class AuthServlet extends HttpServlet {
         try {
             User user = userDAO.authenticate(email.trim(), password);
             if (user != null) {
-                HttpSession session = req.getSession(true);
-                session.setMaxInactiveInterval(30 * 60);
-                session.setAttribute("user", user);
+                // Prevent session fixation: invalidate old session and create fresh session
+                HttpSession oldSession = req.getSession(false);
+                if (oldSession != null) {
+                    oldSession.invalidate();
+                }
+
+                HttpSession newSession = req.getSession(true);
+                newSession.setMaxInactiveInterval(30 * 60); // 30 minutes
+                newSession.setAttribute("user", user);
 
                 UserPrincipal principal = UserPrincipal.fromUser(user);
-                session.setAttribute("userPrincipal", principal);
+                newSession.setAttribute("userPrincipal", principal);
+
+                // Rotate CSRF token immediately upon authentication
+                String freshCsrfToken = CsrfFilter.generateToken();
+                newSession.setAttribute(CsrfFilter.CSRF_TOKEN_ATTR, freshCsrfToken);
+                req.setAttribute(CsrfFilter.CSRF_TOKEN_ATTR, freshCsrfToken);
 
                 ActivityLogService.logAsync(user.getEmail(), "LOGIN", "User authenticated successfully");
 
                 if (user.isAdmin()) {
-                    resp.sendRedirect(req.getContextPath() + "/admin");
+                    resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
                 } else {
-                    resp.sendRedirect(req.getContextPath() + "/dashboard");
+                    resp.sendRedirect(req.getContextPath() + "/user/dashboard");
                 }
             } else {
                 ActivityLogService.logAsync(email, "LOGIN_FAILED", "Invalid credentials provided");
@@ -124,14 +137,25 @@ public class AuthServlet extends HttpServlet {
 
             if (success) {
                 ActivityLogService.logAsync(email, "REGISTER", "New user registered successfully");
-                HttpSession session = req.getSession(true);
-                session.setMaxInactiveInterval(30 * 60);
-                session.setAttribute("user", newUser);
+
+                // Prevent session fixation: invalidate old session and create fresh session
+                HttpSession oldSession = req.getSession(false);
+                if (oldSession != null) {
+                    oldSession.invalidate();
+                }
+
+                HttpSession newSession = req.getSession(true);
+                newSession.setMaxInactiveInterval(30 * 60);
+                newSession.setAttribute("user", newUser);
 
                 UserPrincipal principal = UserPrincipal.fromUser(newUser);
-                session.setAttribute("userPrincipal", principal);
+                newSession.setAttribute("userPrincipal", principal);
 
-                resp.sendRedirect(req.getContextPath() + "/dashboard?msg=registered");
+                String freshCsrfToken = CsrfFilter.generateToken();
+                newSession.setAttribute(CsrfFilter.CSRF_TOKEN_ATTR, freshCsrfToken);
+                req.setAttribute(CsrfFilter.CSRF_TOKEN_ATTR, freshCsrfToken);
+
+                resp.sendRedirect(req.getContextPath() + "/user/dashboard?msg=registered");
             } else {
                 req.setAttribute("errorMessage", "Failed to register user. Please try again.");
                 req.getRequestDispatcher("/login.jsp?tab=register").forward(req, resp);
