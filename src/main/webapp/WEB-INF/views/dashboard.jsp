@@ -70,19 +70,31 @@
     <div class="main-container">
 
         <!-- Hero Welcome Banner -->
-        <div class="card-panel welcome-hero">
-            <div>
-                <h1 class="page-title">Welcome back, <%= currentUser.getName() %>!</h1>
-                <p class="page-subtitle">Track live workout telemetry, active goals, and streak metrics.</p>
+        <div class="card-panel welcome-hero" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+            <!-- Left Side: User Greeting, Subtitle & Metadata Badges -->
+            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                <h1 class="page-title" style="margin-bottom: 0.25rem;">Welcome back, <%= currentUser.getName() %>!</h1>
+                <p class="page-subtitle" style="margin-bottom: 0.5rem;">Track live workout telemetry, active goals, and streak metrics.</p>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <span class="badge-streak">🔥 <%= currentStreak %> Day Streak</span>
+                    <span class="badge-date">📅 <%= currentDateStr %></span>
+                </div>
             </div>
-            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                <span class="badge-streak">🔥 <%= currentStreak %> Day Streak</span>
-                <span class="badge-date">📅 <%= currentDateStr %></span>
+
+            <!-- Right Side: Action Button Group with Spotlight "+ Log Workout" -->
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-left: auto;">
                 <!-- Innovation 1 Modal Trigger -->
-                <button type="button" class="btn" onclick="openBmrModal()" style="background: rgba(37,99,235,0.15); color: #2563eb; border: 1px solid rgba(37,99,235,0.3); font-size: 0.85rem;">🧮 BMR / TDEE Calculator</button>
+                <button type="button" class="btn" onclick="openBmrModal()" style="background: rgba(37,99,235,0.15); color: #2563eb; border: 1px solid rgba(37,99,235,0.3); font-size: 0.85rem;">
+                    🧮 BMR / TDEE Calculator
+                </button>
                 <!-- Innovation 2 CSV Export -->
-                <a href="${pageContext.request.contextPath}/workouts?action=exportCsv" class="btn" style="background: rgba(16,185,129,0.15); color: var(--primary-emerald-hover); border: 1px solid rgba(16,185,129,0.3); font-size: 0.85rem;">📥 Download CSV Report</a>
-                <a href="${pageContext.request.contextPath}/workouts" class="btn btn-emerald">+ Log Workout</a>
+                <a href="${pageContext.request.contextPath}/workouts?action=exportCsv" class="btn" style="background: rgba(16,185,129,0.15); color: var(--primary-emerald-hover); border: 1px solid rgba(16,185,129,0.3); font-size: 0.85rem;">
+                    📥 Download CSV Report
+                </a>
+                <!-- Spotlight Log Workout Button -->
+                <a href="${pageContext.request.contextPath}/workouts" class="btn btn-emerald" style="box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); padding: 0.65rem 1.4rem; font-weight: 700;">
+                    + Log Workout
+                </a>
             </div>
         </div>
 
