@@ -4,6 +4,7 @@ import com.vitalfit.dao.ChallengeDAO;
 import com.vitalfit.model.Challenge;
 import com.vitalfit.model.User;
 import com.vitalfit.service.ActivityLogService;
+import com.vitalfit.util.XssSanitizer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,7 +18,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
-@WebServlet("/challenges")
+/**
+ * Controller handling community challenges, user enrollments, and admin challenge creation.
+ *
+ * @author Mukesh kumar (25SCSE1330101) - Team NOVA
+ */
+@WebServlet(urlPatterns = {"/challenges", "/user/challenges"})
 public class ChallengeServlet extends HttpServlet {
 
     private ChallengeDAO challengeDAO;
@@ -66,7 +72,6 @@ public class ChallengeServlet extends HttpServlet {
         try {
             if ("join".equalsIgnoreCase(action)) {
                 int challengeId = Integer.parseInt(req.getParameter("challengeId"));
-                // ACID Transaction executed inside challengeDAO.joinChallenge
                 boolean joined = challengeDAO.joinChallenge(user.getId(), challengeId);
                 if (joined) {
                     req.getSession().setAttribute("flashMessage", "Successfully joined the challenge!");
@@ -74,9 +79,9 @@ public class ChallengeServlet extends HttpServlet {
                     req.getSession().setAttribute("flashMessage", "You have already joined or couldn't join this challenge.");
                 }
             } else if ("create".equalsIgnoreCase(action) && user.isAdmin()) {
-                String title = req.getParameter("title");
-                String description = req.getParameter("description");
-                String targetType = req.getParameter("targetType");
+                String title = XssSanitizer.sanitize(req.getParameter("title"));
+                String description = XssSanitizer.sanitize(req.getParameter("description"));
+                String targetType = XssSanitizer.sanitize(req.getParameter("targetType"));
                 double targetGoal = Double.parseDouble(req.getParameter("targetGoal"));
                 Date startDate = Date.valueOf(req.getParameter("startDate"));
                 Date endDate = Date.valueOf(req.getParameter("endDate"));

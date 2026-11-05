@@ -1,15 +1,62 @@
 package com.vitalfit.dao;
 
 import com.vitalfit.config.DBConnection;
+import com.vitalfit.config.TransactionManager;
 import com.vitalfit.model.Challenge;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-public class ChallengeDAO {
+/**
+ * Data Access Object for Challenges with ACID transactional join.
+ *
+ * @author ADITYA KUMAR SINGH (25SCSE1180275) - Team NOVA
+ */
+public class ChallengeDAO implements GenericDao<Challenge, Integer> {
+
+    @Override
+    public Optional<Challenge> findById(Integer id) throws SQLException {
+        if (id == null) return Optional.empty();
+        return Optional.ofNullable(getChallengeById(id.intValue()));
+    }
+
+    @Override
+    public List<Challenge> findAll() throws SQLException {
+        return getAllChallenges(0);
+    }
+
+    @Override
+    public boolean save(Challenge entity) throws SQLException {
+        return createChallenge(entity);
+    }
+
+    @Override
+    public boolean update(Challenge entity) throws SQLException {
+        if (entity == null || entity.getId() <= 0) return false;
+        String sql = "UPDATE challenges SET title = ?, description = ?, target_type = ?, target_goal = ?, " +
+                     "start_date = ?, end_date = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, entity.getTitle());
+            stmt.setString(2, entity.getDescription());
+            stmt.setString(3, entity.getTargetType());
+            stmt.setDouble(4, entity.getTargetGoal());
+            stmt.setDate(5, entity.getStartDate());
+            stmt.setDate(6, entity.getEndDate());
+            stmt.setInt(7, entity.getId());
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    @Override
+    public boolean deleteById(Integer id) throws SQLException {
+        if (id == null) return false;
+        return deleteChallenge(id.intValue());
+    }
 
     public List<Challenge> getAllChallenges(int currentUserId) throws SQLException {
         List<Challenge> challenges = new ArrayList<>();
@@ -92,16 +139,9 @@ public class ChallengeDAO {
 
     /**
      * ACID Transaction for Joining a Challenge.
-     * Sets autoCommit(false), checks duplicate entry, inserts participant, records activity log,
-     * and commits transaction. In case of error, executes rollback.
      */
     public boolean joinChallenge(int userId, int challengeId) throws SQLException {
-        Connection conn = null;
-        try {
-            conn = DBConnection.getConnection();
-            conn.setAutoCommit(false); // Begin ACID Transaction
-
-            // 1. Verify user email for audit logging
+        return TransactionManager.executeInTransaction(conn -> {
             String userEmail = null;
             String userSql = "SELECT email FROM users WHERE id = ?";
             try (PreparedStatement userStmt = conn.prepareStatement(userSql)) {
@@ -114,25 +154,20 @@ public class ChallengeDAO {
             }
 
             if (userEmail == null) {
-                conn.rollback();
                 return false;
             }
 
-            // 2. Duplicate Check
             String checkSql = "SELECT id FROM challenge_participants WHERE challenge_id = ? AND user_id = ?";
             try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
                 checkStmt.setInt(1, challengeId);
                 checkStmt.setInt(2, userId);
                 try (ResultSet rs = checkStmt.executeQuery()) {
                     if (rs.next()) {
-                        // User already joined this challenge
-                        conn.rollback();
                         return false;
                     }
                 }
             }
 
-            // 3. Insert Participant Record
             String insertSql = "INSERT INTO challenge_participants (challenge_id, user_id, status) VALUES (?, ?, 'ACTIVE')";
             try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
                 insertStmt.setInt(1, challengeId);
@@ -140,7 +175,6 @@ public class ChallengeDAO {
                 insertStmt.executeUpdate();
             }
 
-            // 4. Log Activity as part of transaction
             String logSql = "INSERT INTO activity_log (user_email, action, details, thread_name) VALUES (?, ?, ?, ?)";
             try (PreparedStatement logStmt = conn.prepareStatement(logSql)) {
                 logStmt.setString(1, userEmail);
@@ -150,27 +184,8 @@ public class ChallengeDAO {
                 logStmt.executeUpdate();
             }
 
-            conn.commit(); // Commit ACID Transaction
             return true;
-        } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    conn.rollback(); // Rollback on failure
-                } catch (SQLException ex) {
-                    System.err.println("Rollback failed: " + ex.getMessage());
-                }
-            }
-            throw e;
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                    conn.close();
-                } catch (SQLException ex) {
-                    System.err.println("Error closing connection: " + ex.getMessage());
-                }
-            }
-        }
+        });
     }
 
     public boolean createChallenge(Challenge challenge) throws SQLException {

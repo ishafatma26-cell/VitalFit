@@ -2,7 +2,9 @@ package com.vitalfit.controller;
 
 import com.vitalfit.dao.UserDAO;
 import com.vitalfit.model.User;
+import com.vitalfit.model.UserPrincipal;
 import com.vitalfit.service.ActivityLogService;
+import com.vitalfit.util.XssSanitizer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,6 +15,11 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Authentication Servlet for user sign-in, registration, and logout.
+ *
+ * @author Isha Fatma (25SCSE1180892) - Team NOVA
+ */
 @WebServlet(urlPatterns = {"/login", "/register", "/logout"})
 public class AuthServlet extends HttpServlet {
 
@@ -68,7 +75,12 @@ public class AuthServlet extends HttpServlet {
             User user = userDAO.authenticate(email.trim(), password);
             if (user != null) {
                 HttpSession session = req.getSession(true);
+                session.setMaxInactiveInterval(30 * 60);
                 session.setAttribute("user", user);
+
+                UserPrincipal principal = UserPrincipal.fromUser(user);
+                session.setAttribute("userPrincipal", principal);
+
                 ActivityLogService.logAsync(user.getEmail(), "LOGIN", "User authenticated successfully");
 
                 if (user.isAdmin()) {
@@ -89,7 +101,8 @@ public class AuthServlet extends HttpServlet {
     }
 
     private void handleRegister(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
+        String rawName = req.getParameter("name");
+        String name = XssSanitizer.sanitize(rawName);
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
@@ -112,7 +125,12 @@ public class AuthServlet extends HttpServlet {
             if (success) {
                 ActivityLogService.logAsync(email, "REGISTER", "New user registered successfully");
                 HttpSession session = req.getSession(true);
+                session.setMaxInactiveInterval(30 * 60);
                 session.setAttribute("user", newUser);
+
+                UserPrincipal principal = UserPrincipal.fromUser(newUser);
+                session.setAttribute("userPrincipal", principal);
+
                 resp.sendRedirect(req.getContextPath() + "/dashboard?msg=registered");
             } else {
                 req.setAttribute("errorMessage", "Failed to register user. Please try again.");

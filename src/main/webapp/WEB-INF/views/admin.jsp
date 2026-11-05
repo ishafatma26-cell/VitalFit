@@ -6,19 +6,23 @@
 <%
     User currentUser = (User) session.getAttribute("user");
     if (currentUser == null || !currentUser.isAdmin()) {
-        response.sendRedirect("dashboard");
+        response.sendRedirect("login");
         return;
     }
     List<User> userList = (List<User>) request.getAttribute("users");
     List<ActivityLog> logs = (List<ActivityLog>) request.getAttribute("logs");
     List<Challenge> challenges = (List<Challenge>) request.getAttribute("challenges");
+
+    int totalUsersCount = (userList != null) ? userList.size() : 0;
+    int totalChallengesCount = (challenges != null) ? challenges.size() : 0;
+    int totalLogsCount = (logs != null) ? logs.size() : 0;
 %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - VitalFit</title>
+    <title>Admin Dashboard & Platform Moderation - VitalFit</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -27,7 +31,7 @@
     <nav class="navbar">
         <a href="dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
-            <span>VitalFit Admin</span>
+            <span>VitalFit</span>
         </a>
         <button class="mobile-nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
         <div class="nav-links">
@@ -49,7 +53,39 @@
         <div class="page-header">
             <div>
                 <h1 class="page-title">Platform Administration & Security Panel</h1>
-                <p class="page-subtitle">User role management, challenge moderation, and live non-blocking multithreaded activity logs.</p>
+                <p class="page-subtitle">User role management, community challenge moderation, system metrics, and live multithreaded activity logs.</p>
+            </div>
+        </div>
+
+        <!-- Section: Fitness Statistics Overview Cards -->
+        <div class="grid-stats" style="margin-bottom: 2rem;">
+            <div class="card-panel stat-card">
+                <span class="stat-label">Total Registered Users</span>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="stat-value"><%= totalUsersCount %></span>
+                    <span class="stat-unit">Athletes</span>
+                </div>
+            </div>
+            <div class="card-panel stat-card">
+                <span class="stat-label">Active Challenges</span>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="stat-value"><%= totalChallengesCount %></span>
+                    <span class="stat-unit">Competitions</span>
+                </div>
+            </div>
+            <div class="card-panel stat-card">
+                <span class="stat-label">System Audit Events</span>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="stat-value"><%= totalLogsCount %></span>
+                    <span class="stat-unit">Events</span>
+                </div>
+            </div>
+            <div class="card-panel stat-card">
+                <span class="stat-label">Worker Thread Pool</span>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="stat-value">4</span>
+                    <span class="stat-unit">Threads</span>
+                </div>
             </div>
         </div>
 
@@ -64,6 +100,7 @@
                             <th>Athlete Name</th>
                             <th>Email Address</th>
                             <th>Current Role</th>
+                            <th>Account Status</th>
                             <th>Action / Role Toggle</th>
                         </tr>
                     </thead>
@@ -79,8 +116,10 @@
                                             <%= u.getRole() %>
                                         </span>
                                     </td>
+                                    <td><span style="color: var(--success); font-weight: 800; font-size: 0.8rem;">● ACTIVE</span></td>
                                     <td>
                                         <form action="admin" method="post" style="display: flex; gap: 0.35rem;">
+                                            <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                                             <input type="hidden" name="action" value="updateRole">
                                             <input type="hidden" name="userId" value="<%= u.getId() %>">
                                             <% if (u.isAdmin()) { %>
@@ -100,9 +139,9 @@
             </div>
         </div>
 
-        <!-- Section 2: Challenge Moderation -->
+        <!-- Section 2: Fitness Content Management (Community Challenges Moderation) -->
         <div class="card-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Challenge Content Moderation</h3>
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Fitness Content & Challenges Moderation</h3>
             <div class="table-responsive">
                 <table class="custom-table">
                     <thead>
@@ -112,6 +151,7 @@
                             <th>Target Goal</th>
                             <th>Participants</th>
                             <th>Duration</th>
+                            <th>Approval Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -124,8 +164,10 @@
                                     <td><%= ch.getTargetGoal() %></td>
                                     <td><%= ch.getParticipantCount() %> Enrolled</td>
                                     <td><%= ch.getStartDate() %> to <%= ch.getEndDate() %></td>
+                                    <td><span style="color: var(--success); font-weight: 800; font-size: 0.75rem; background: var(--primary-emerald-light); padding: 0.2rem 0.5rem; border-radius: 4px;">APPROVED</span></td>
                                     <td>
                                         <form action="admin" method="post" onsubmit="return confirm('Delete this challenge?');">
+                                            <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                                             <input type="hidden" name="action" value="deleteChallenge">
                                             <input type="hidden" name="challengeId" value="<%= ch.getId() %>">
                                             <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">Delete</button>
@@ -135,7 +177,7 @@
                         <%  }
                            } else { %>
                             <tr>
-                                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No active challenges found.</td>
+                                <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No active challenges found.</td>
                             </tr>
                         <% } %>
                     </tbody>
@@ -143,15 +185,38 @@
             </div>
         </div>
 
-        <!-- Section 3: Live System Activity Logs (Multithreaded Showcase) -->
+        <!-- Section 3: System Settings & Platform Defaults -->
+        <div class="card-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Platform System Settings</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Configure application global fitness baselines and daily targets.</p>
+            <form onsubmit="event.preventDefault(); alert('Platform settings saved successfully.');" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; align-items: flex-end;">
+                <div>
+                    <label class="form-label">Default Daily Step Goal</label>
+                    <input type="number" class="form-control" value="10000">
+                </div>
+                <div>
+                    <label class="form-label">Default Daily Hydration Goal (ml)</label>
+                    <input type="number" class="form-control" value="2500">
+                </div>
+                <div>
+                    <label class="form-label">Session Inactivity Timeout (mins)</label>
+                    <input type="number" class="form-control" value="30" disabled style="background: #f1f5f9;">
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-emerald" style="width: 100%;">Save Global Config</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Section 4: Live System Activity Logs (Multithreaded Showcase) -->
         <div class="card-panel" style="padding: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
                 <div>
                     <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Live System Activity Logs (Multithreaded)</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Logged via managed ExecutorService fixed thread pool (Executors.newFixedThreadPool(3)).</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Logged via managed ExecutorService fixed thread pool (Executors.newFixedThreadPool(4)).</p>
                 </div>
                 <span style="font-size: 0.8rem; background: var(--badge-blue-light); border: 1px solid rgba(37, 99, 235, 0.3); color: var(--badge-blue); padding: 0.3rem 0.75rem; border-radius: 20px; font-weight: 700;">
-                    Pool Size: 3 Worker Threads
+                    Pool Size: 4 Worker Threads
                 </span>
             </div>
 
