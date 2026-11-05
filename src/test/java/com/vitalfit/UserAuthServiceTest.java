@@ -78,4 +78,26 @@ public class UserAuthServiceTest {
         UserPrincipal normalPrincipal = UserPrincipal.fromUser(normalUser);
         assertFalse(normalPrincipal.isAdmin());
     }
+
+    @Test
+    @DisplayName("Password reset updates password hash by email and re-authenticates with new password")
+    public void testPasswordResetByEmail() throws Exception {
+        User user = new User("Reset User", "reset_me@vitalfit.demo", null, "USER");
+        assertTrue(userDAO.registerUser(user, "OldPassword123"));
+
+        assertTrue(userDAO.existsByEmail("reset_me@vitalfit.demo"));
+        assertFalse(userDAO.existsByEmail("nonexistent_athlete@vitalfit.demo"));
+
+        String newHashed = org.mindrot.jbcrypt.BCrypt.hashpw("BrandNewPassword456", org.mindrot.jbcrypt.BCrypt.gensalt(12));
+        boolean resetSuccess = userDAO.updatePasswordByEmail("reset_me@vitalfit.demo", newHashed);
+        assertTrue(resetSuccess);
+
+        // Verify old password fails
+        assertNull(userDAO.authenticate("reset_me@vitalfit.demo", "OldPassword123"));
+
+        // Verify new password succeeds
+        User reAuth = userDAO.authenticate("reset_me@vitalfit.demo", "BrandNewPassword456");
+        assertNotNull(reAuth);
+        assertEquals("Reset User", reAuth.getName());
+    }
 }

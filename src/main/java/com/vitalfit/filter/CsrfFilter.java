@@ -68,9 +68,19 @@ public class CsrfFilter implements Filter {
 
             if (requestToken == null || !sessionToken.equals(requestToken.trim())) {
                 String servletPath = req.getServletPath();
-                if ("/login".equals(servletPath) || "/register".equals(servletPath)) {
+                if ("/login".equals(servletPath) || "/register".equals(servletPath) || "/forgot-password".equals(servletPath)) {
                     String freshToken = generateToken();
                     session.setAttribute(CSRF_TOKEN_ATTR, freshToken);
+                    if ("/forgot-password".equals(servletPath)) {
+                        req.setAttribute("error", "Session expired or invalid CSRF token. Please try again.");
+                        req.setAttribute(CSRF_TOKEN_ATTR, freshToken);
+                        try {
+                            req.getRequestDispatcher("/forgot-password.jsp").forward(request, response);
+                        } catch (Exception ignored) {
+                            resp.sendRedirect(req.getContextPath() + "/forgot-password");
+                        }
+                        return;
+                    }
                     resp.sendRedirect(req.getContextPath() + "/login.jsp?error=session_expired");
                     return;
                 }
