@@ -32,8 +32,14 @@ public class CsrfFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
 
-        String path = req.getRequestURI();
-        if (isStaticAsset(path)) {
+        String contextPath = req.getContextPath() != null ? req.getContextPath() : "";
+        String requestUri = req.getRequestURI() != null ? req.getRequestURI() : "";
+        String requestPath = (requestUri.startsWith(contextPath) && !contextPath.isEmpty())
+                ? requestUri.substring(contextPath.length())
+                : requestUri;
+
+        // Static asset bypass check
+        if (isStaticAsset(requestPath)) {
             chain.doFilter(request, response);
             return;
         }
@@ -63,7 +69,6 @@ public class CsrfFilter implements Filter {
             if (requestToken == null || !sessionToken.equals(requestToken.trim())) {
                 String servletPath = req.getServletPath();
                 if ("/login".equals(servletPath) || "/register".equals(servletPath)) {
-                    // Gracefully redirect unauthenticated auth routes to login with error parameter
                     String freshToken = generateToken();
                     session.setAttribute(CSRF_TOKEN_ATTR, freshToken);
                     resp.sendRedirect(req.getContextPath() + "/login.jsp?error=session_expired");
@@ -80,10 +85,11 @@ public class CsrfFilter implements Filter {
     private boolean isStaticAsset(String path) {
         if (path == null) return false;
         String lower = path.toLowerCase();
-        return lower.endsWith(".css") || lower.endsWith(".js") || lower.endsWith(".png")
-                || lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".gif")
-                || lower.endsWith(".ico") || lower.endsWith(".svg") || lower.endsWith(".woff")
-                || lower.endsWith(".woff2") || lower.endsWith(".ttf");
+        return lower.startsWith("/css/") || lower.startsWith("/js/") || lower.startsWith("/assets/")
+                || lower.startsWith("/images/") || lower.endsWith(".css") || lower.endsWith(".js")
+                || lower.endsWith(".png") || lower.endsWith(".jpg") || lower.endsWith(".jpeg")
+                || lower.endsWith(".gif") || lower.endsWith(".ico") || lower.endsWith(".svg")
+                || lower.endsWith(".woff") || lower.endsWith(".woff2") || lower.endsWith(".ttf");
     }
 
     public static String generateToken() {

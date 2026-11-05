@@ -31,10 +31,32 @@ public class AuthFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
 
+        String contextPath = req.getContextPath();
+        String requestUri = req.getRequestURI();
+        String requestPath = requestUri.substring(contextPath.length());
+
+        // Explicit static asset bypass
+        if (requestPath.startsWith("/css/") ||
+            requestPath.startsWith("/js/") ||
+            requestPath.startsWith("/assets/") ||
+            requestPath.startsWith("/images/") ||
+            requestPath.endsWith(".css") ||
+            requestPath.endsWith(".js") ||
+            requestPath.endsWith(".png") ||
+            requestPath.endsWith(".jpg") ||
+            requestPath.endsWith(".jpeg") ||
+            requestPath.endsWith(".ico") ||
+            requestPath.endsWith(".svg") ||
+            requestPath.endsWith(".woff") ||
+            requestPath.endsWith(".woff2") ||
+            requestPath.endsWith(".ttf")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         HttpSession session = req.getSession(false);
         UserPrincipal principal = (session != null) ? (UserPrincipal) session.getAttribute("userPrincipal") : null;
 
-        // Fallback check for session "user" if userPrincipal is not yet set
         if (principal == null && session != null) {
             Object userObj = session.getAttribute("user");
             if (userObj instanceof com.vitalfit.model.User) {
@@ -44,17 +66,13 @@ public class AuthFilter implements Filter {
             }
         }
 
-        String requestUri = req.getRequestURI();
-        String contextPath = req.getContextPath();
-        String path = requestUri.substring(contextPath.length());
-
         if (principal == null) {
             resp.sendRedirect(contextPath + "/login");
             return;
         }
 
         // Role-based access control for admin routes
-        if (path.startsWith("/admin")) {
+        if (requestPath.startsWith("/admin")) {
             if (!principal.isAdmin()) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Administrator role required.");
                 return;

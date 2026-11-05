@@ -37,7 +37,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - VitalFit</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <!-- Chart.js CDN for Visual Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
@@ -45,25 +45,25 @@
 
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <a href="dashboard" class="nav-brand">
+        <a href="${pageContext.request.contextPath}/dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
         <button class="mobile-nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
         <div class="nav-links">
-            <a href="dashboard" class="nav-link active">Dashboard</a>
-            <a href="workouts" class="nav-link">Workouts</a>
-            <a href="challenges" class="nav-link">Challenges</a>
-            <a href="leaderboard" class="nav-link">Leaderboard</a>
-            <a href="profile" class="nav-link">Profile</a>
+            <a href="${pageContext.request.contextPath}/dashboard" class="nav-link active">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/workouts" class="nav-link">Workouts</a>
+            <a href="${pageContext.request.contextPath}/challenges" class="nav-link">Challenges</a>
+            <a href="${pageContext.request.contextPath}/leaderboard" class="nav-link">Leaderboard</a>
+            <a href="${pageContext.request.contextPath}/profile" class="nav-link">Profile</a>
             <% if (currentUser.isAdmin()) { %>
-                <a href="admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
+                <a href="${pageContext.request.contextPath}/admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
             <% } %>
             <div class="user-badge">
                 <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
-            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
+            <a href="${pageContext.request.contextPath}/logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
         </div>
     </nav>
 
@@ -81,8 +81,8 @@
                 <!-- Innovation 1 Modal Trigger -->
                 <button type="button" class="btn" onclick="openBmrModal()" style="background: rgba(37,99,235,0.15); color: #2563eb; border: 1px solid rgba(37,99,235,0.3); font-size: 0.85rem;">🧮 BMR / TDEE Calculator</button>
                 <!-- Innovation 2 CSV Export -->
-                <a href="workouts?action=exportCsv" class="btn" style="background: rgba(16,185,129,0.15); color: var(--primary-emerald-hover); border: 1px solid rgba(16,185,129,0.3); font-size: 0.85rem;">📥 Download CSV Report</a>
-                <a href="workouts" class="btn btn-emerald">+ Log Workout</a>
+                <a href="${pageContext.request.contextPath}/workouts?action=exportCsv" class="btn" style="background: rgba(16,185,129,0.15); color: var(--primary-emerald-hover); border: 1px solid rgba(16,185,129,0.3); font-size: 0.85rem;">📥 Download CSV Report</a>
+                <a href="${pageContext.request.contextPath}/workouts" class="btn btn-emerald">+ Log Workout</a>
             </div>
         </div>
 
@@ -141,7 +141,7 @@
             <div class="card-panel" style="padding: 1.5rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                     <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Recent Workout History</h3>
-                    <a href="workouts" style="color: var(--primary-emerald-hover); font-size: 0.85rem; text-decoration: none; font-weight: 700;">View All &rarr;</a>
+                    <a href="${pageContext.request.contextPath}/workouts" style="color: var(--primary-emerald-hover); font-size: 0.85rem; text-decoration: none; font-weight: 700;">View All &rarr;</a>
                 </div>
 
                 <div class="table-responsive">
@@ -180,7 +180,7 @@
             <div class="card-panel" style="padding: 1.5rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                     <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Target Goals Progress</h3>
-                    <a href="workouts" class="btn btn-emerald" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">+ Set Goal</a>
+                    <a href="${pageContext.request.contextPath}/workouts" class="btn btn-emerald" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; min-height: auto;">+ Set Goal</a>
                 </div>
 
                 <% if (goals != null && !goals.isEmpty()) {
