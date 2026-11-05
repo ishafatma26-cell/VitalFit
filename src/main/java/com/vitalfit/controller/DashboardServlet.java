@@ -1,3 +1,7 @@
+/**
+ * Controller telemetry endpoints and Chart.js integration
+ * Contributor: Mukesh kumar (Add No: 25SCSE1330101)
+ */
 package com.vitalfit.controller;
 
 import com.vitalfit.dao.WorkoutDAO;
