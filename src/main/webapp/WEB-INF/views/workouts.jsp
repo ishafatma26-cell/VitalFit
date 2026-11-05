@@ -18,31 +18,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workouts CRUD - VitalFit</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
 
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <a href="dashboard" class="nav-brand">
+        <a href="${pageContext.request.contextPath}/dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
         <button class="mobile-nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
         <div class="nav-links">
-            <a href="dashboard" class="nav-link">Dashboard</a>
-            <a href="workouts" class="nav-link active">Workouts</a>
-            <a href="challenges" class="nav-link">Challenges</a>
-            <a href="leaderboard" class="nav-link">Leaderboard</a>
-            <a href="profile" class="nav-link">Profile</a>
+            <a href="${pageContext.request.contextPath}/dashboard" class="nav-link">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/workouts" class="nav-link active">Workouts</a>
+            <a href="${pageContext.request.contextPath}/challenges" class="nav-link">Challenges</a>
+            <a href="${pageContext.request.contextPath}/leaderboard" class="nav-link">Leaderboard</a>
+            <a href="${pageContext.request.contextPath}/profile" class="nav-link">Profile</a>
             <% if (currentUser.isAdmin()) { %>
-                <a href="admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
+                <a href="${pageContext.request.contextPath}/admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
             <% } %>
             <div class="user-badge">
                 <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
-            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
+            <a href="${pageContext.request.contextPath}/logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
         </div>
     </nav>
 
@@ -53,7 +53,7 @@
                 <p class="page-subtitle">Log new sessions, define health goals, and manage your activity history.</p>
             </div>
             <!-- Innovation 2: CSV Export -->
-            <a href="workouts?action=exportCsv" class="btn" style="background: rgba(16,185,129,0.15); color: var(--primary-emerald-hover); border: 1px solid rgba(16,185,129,0.3);">
+            <a href="${pageContext.request.contextPath}/workouts?action=exportCsv" class="btn" style="background: rgba(16,185,129,0.15); color: var(--primary-emerald-hover); border: 1px solid rgba(16,185,129,0.3);">
                 📥 Download CSV Report
             </a>
         </div>
@@ -66,7 +66,7 @@
                 <!-- Log Workout Form -->
                 <div class="card-panel" style="padding: 1.5rem;">
                     <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Log a New Workout</h3>
-                    <form action="workouts" method="post">
+                    <form action="${pageContext.request.contextPath}/workouts" method="post">
                         <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                             <div class="form-group">
@@ -123,7 +123,7 @@
                 <!-- Set Target Goal Form -->
                 <div class="card-panel" style="padding: 1.5rem;">
                     <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Set Target Goal</h3>
-                    <form action="workouts" method="post">
+                    <form action="${pageContext.request.contextPath}/workouts" method="post">
                         <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                         <input type="hidden" name="action" value="addGoal">
                         <div class="form-group">
@@ -190,7 +190,7 @@
                                                     Edit
                                                 </button>
                                                 <!-- Delete Action -->
-                                                <form action="workouts" method="post" style="display: inline;" onsubmit="return confirm('Delete this workout record?');">
+                                                <form action="${pageContext.request.contextPath}/workouts" method="post" style="display: inline;" onsubmit="return confirm('Delete this workout record?');">
                                                     <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                                                     <input type="hidden" name="action" value="delete">
                                                     <input type="hidden" name="id" value="<%= w.getId() %>">
@@ -221,7 +221,7 @@
                 <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin: 0;">Edit Workout Record</h3>
                 <button type="button" onclick="closeEditModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
             </div>
-            <form action="workouts" method="post">
+            <form action="${pageContext.request.contextPath}/workouts" method="post">
                 <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                 <input type="hidden" name="action" value="edit">
                 <input type="hidden" id="editId" name="id" value="">

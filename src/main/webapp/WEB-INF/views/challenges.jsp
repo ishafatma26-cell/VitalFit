@@ -31,31 +31,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Available Challenges - VitalFit</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
 
     <!-- Header Navigation Bar -->
     <nav class="navbar">
-        <a href="dashboard" class="nav-brand">
+        <a href="${pageContext.request.contextPath}/dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
         <button class="mobile-nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
         <div class="nav-links">
-            <a href="dashboard" class="nav-link">Dashboard</a>
-            <a href="workouts" class="nav-link">Workouts</a>
-            <a href="challenges" class="nav-link active">Challenges</a>
-            <a href="leaderboard" class="nav-link">Leaderboard</a>
-            <a href="profile" class="nav-link">Profile</a>
+            <a href="${pageContext.request.contextPath}/dashboard" class="nav-link">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/workouts" class="nav-link">Workouts</a>
+            <a href="${pageContext.request.contextPath}/challenges" class="nav-link active">Challenges</a>
+            <a href="${pageContext.request.contextPath}/leaderboard" class="nav-link">Leaderboard</a>
+            <a href="${pageContext.request.contextPath}/profile" class="nav-link">Profile</a>
             <% if (currentUser.isAdmin()) { %>
-                <a href="admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
+                <a href="${pageContext.request.contextPath}/admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
             <% } %>
             <div class="user-badge">
                 <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
-            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
+            <a href="${pageContext.request.contextPath}/logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
         </div>
     </nav>
 
@@ -75,7 +75,7 @@
             <!-- Admin Challenge Creator Card -->
             <div class="card-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
                 <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--warning);">+ Admin: Launch Community Challenge</h3>
-                <form action="challenges" method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: flex-end;">
+                <form action="${pageContext.request.contextPath}/challenges" method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: flex-end;">
                     <input type="hidden" name="action" value="create">
                     <div>
                         <label class="form-label">Challenge Title</label>
@@ -144,7 +144,7 @@
                             </div>
 
                             <!-- Full-Width Button or Active Joined Badge -->
-                            <form action="challenges" method="post">
+                            <form action="${pageContext.request.contextPath}/challenges" method="post">
                                 <input type="hidden" name="action" value="join">
                                 <input type="hidden" name="challengeId" value="<%= c.getId() %>">
                                 <% if (isEnrolled || c.isJoined()) { %>

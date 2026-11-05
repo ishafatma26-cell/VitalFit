@@ -23,29 +23,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard & Platform Moderation - VitalFit</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
 
     <!-- Header Navigation Bar -->
     <nav class="navbar">
-        <a href="dashboard" class="nav-brand">
+        <a href="${pageContext.request.contextPath}/dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
         <button class="mobile-nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
         <div class="nav-links">
-            <a href="dashboard" class="nav-link">Dashboard</a>
-            <a href="workouts" class="nav-link">Workouts</a>
-            <a href="challenges" class="nav-link">Challenges</a>
-            <a href="leaderboard" class="nav-link">Leaderboard</a>
-            <a href="profile" class="nav-link">Profile</a>
-            <a href="admin" class="nav-link active" style="color: var(--warning);">Admin Panel</a>
+            <a href="${pageContext.request.contextPath}/dashboard" class="nav-link">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/workouts" class="nav-link">Workouts</a>
+            <a href="${pageContext.request.contextPath}/challenges" class="nav-link">Challenges</a>
+            <a href="${pageContext.request.contextPath}/leaderboard" class="nav-link">Leaderboard</a>
+            <a href="${pageContext.request.contextPath}/profile" class="nav-link">Profile</a>
+            <a href="${pageContext.request.contextPath}/admin" class="nav-link active" style="color: var(--warning);">Admin Panel</a>
             <div class="user-badge">
                 <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
-            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
+            <a href="${pageContext.request.contextPath}/logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
         </div>
     </nav>
 
@@ -118,7 +118,7 @@
                                     </td>
                                     <td><span style="color: var(--success); font-weight: 800; font-size: 0.8rem;">● ACTIVE</span></td>
                                     <td>
-                                        <form action="admin" method="post" style="display: flex; gap: 0.35rem;">
+                                        <form action="${pageContext.request.contextPath}/admin" method="post" style="display: flex; gap: 0.35rem;">
                                             <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                                             <input type="hidden" name="action" value="updateRole">
                                             <input type="hidden" name="userId" value="<%= u.getId() %>">
@@ -166,7 +166,7 @@
                                     <td><%= ch.getStartDate() %> to <%= ch.getEndDate() %></td>
                                     <td><span style="color: var(--success); font-weight: 800; font-size: 0.75rem; background: var(--primary-emerald-light); padding: 0.2rem 0.5rem; border-radius: 4px;">APPROVED</span></td>
                                     <td>
-                                        <form action="admin" method="post" onsubmit="return confirm('Delete this challenge?');">
+                                        <form action="${pageContext.request.contextPath}/admin" method="post" onsubmit="return confirm('Delete this challenge?');">
                                             <input type="hidden" name="csrfToken" value="${csrfToken}"/>
                                             <input type="hidden" name="action" value="deleteChallenge">
                                             <input type="hidden" name="challengeId" value="<%= ch.getId() %>">

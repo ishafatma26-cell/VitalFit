@@ -18,31 +18,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile - VitalFit</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
 
     <!-- Header Navigation Bar -->
     <nav class="navbar">
-        <a href="dashboard" class="nav-brand">
+        <a href="${pageContext.request.contextPath}/dashboard" class="nav-brand">
             <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
         <button class="mobile-nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">☰</button>
         <div class="nav-links">
-            <a href="dashboard" class="nav-link">Dashboard</a>
-            <a href="workouts" class="nav-link">Workouts</a>
-            <a href="challenges" class="nav-link">Challenges</a>
-            <a href="leaderboard" class="nav-link">Leaderboard</a>
-            <a href="profile" class="nav-link active">Profile</a>
+            <a href="${pageContext.request.contextPath}/dashboard" class="nav-link">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/workouts" class="nav-link">Workouts</a>
+            <a href="${pageContext.request.contextPath}/challenges" class="nav-link">Challenges</a>
+            <a href="${pageContext.request.contextPath}/leaderboard" class="nav-link">Leaderboard</a>
+            <a href="${pageContext.request.contextPath}/profile" class="nav-link active">Profile</a>
             <% if (currentUser.isAdmin()) { %>
-                <a href="admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
+                <a href="${pageContext.request.contextPath}/admin" class="nav-link" style="color: var(--warning);">Admin Panel</a>
             <% } %>
             <div class="user-badge">
                 <span style="font-size: 0.85rem; font-weight: 700;"><%= currentUser.getName() %></span>
                 <span class="role-tag"><%= currentUser.getRole() %></span>
             </div>
-            <a href="logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
+            <a href="${pageContext.request.contextPath}/logout" class="btn btn-danger" style="padding: 0.35rem 0.85rem; font-size: 0.8rem; min-height: auto;">Logout</a>
         </div>
     </nav>
 
@@ -81,7 +81,7 @@
             <!-- Update Profile Form -->
             <div class="card-panel" style="padding: 2rem;">
                 <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);">Update Display Name</h3>
-                <form action="profile" method="post">
+                <form action="${pageContext.request.contextPath}/profile" method="post">
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
                         <input type="text" name="name" class="form-control" value="<%= currentUser.getName() %>" required placeholder="Display Name">

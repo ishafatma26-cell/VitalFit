@@ -11,12 +11,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In - VitalFit</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="index.jsp" class="nav-brand">
+        <a href="${pageContext.request.contextPath}/login.jsp" class="nav-brand">
             <div class="brand-icon">⚡</div>
             <span>VitalFit</span>
         </a>
@@ -45,12 +45,12 @@
             <% } %>
 
             <div style="display: flex; background: #f1f5f9; border-radius: var(--radius-md); padding: 0.25rem; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
-                <a href="login.jsp" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= !isRegister ? "var(--primary-emerald-hover)" : "var(--text-muted)" %>; background: <%= !isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= !isRegister ? "var(--shadow-card)" : "none" %>;">Sign In</a>
-                <a href="login.jsp?tab=register" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= isRegister ? "var(--primary-emerald-hover)" : "var(--text-muted)" %>; background: <%= isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= isRegister ? "var(--shadow-card)" : "none" %>;">Register</a>
+                <a href="${pageContext.request.contextPath}/login.jsp" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= !isRegister ? "var(--primary-emerald-hover)" : "var(--text-muted)" %>; background: <%= !isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= !isRegister ? "var(--shadow-card)" : "none" %>;">Sign In</a>
+                <a href="${pageContext.request.contextPath}/login.jsp?tab=register" class="btn" style="flex: 1; padding: 0.5rem; font-size: 0.85rem; border-radius: var(--radius-sm); color: <%= isRegister ? "var(--primary-emerald-hover)" : "var(--text-muted)" %>; background: <%= isRegister ? "#ffffff" : "transparent" %>; box-shadow: <%= isRegister ? "var(--shadow-card)" : "none" %>;">Register</a>
             </div>
 
             <% if (!isRegister) { %>
-                <form action="login" method="post">
+                <form action="${pageContext.request.contextPath}/login" method="post">
                     <input type="hidden" name="csrfToken" value="${csrfToken != null ? csrfToken : sessionScope.csrfToken}" />
                     <div class="form-group">
                         <label class="form-label">Email Address</label>
@@ -63,7 +63,7 @@
                     <button type="submit" class="btn btn-emerald" style="width: 100%; margin-top: 1rem;">Sign In</button>
                 </form>
             <% } else { %>
-                <form action="register" method="post">
+                <form action="${pageContext.request.contextPath}/register" method="post">
                     <input type="hidden" name="csrfToken" value="${csrfToken != null ? csrfToken : sessionScope.csrfToken}" />
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
